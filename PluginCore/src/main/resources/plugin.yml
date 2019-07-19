@@ -1,3 +1,15 @@
+main: uk.codingbadgers.plugincore.PluginCore
+
 name: PluginCore
 version: 1.0
-main: uk.codingbadgers.plugincore.PluginCore
+description: Core plugin for the CodingBadgers module system.
+authors: [n3wton, thefish97]
+website: https://github.com/CodingBadgers/PluginCore
+depends: []
+softdepend: []
+
+commands:
+  plugincore:
+    description: Main command for the plugin
+    usage: /<command>
+    aliases: pc
