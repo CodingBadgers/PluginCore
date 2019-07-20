@@ -81,10 +81,10 @@ public class ModuleLoader {
 
         for (Module module : m_modules) {
             try {
-                m_logger.log(Level.INFO, "Enabling " + module.getDescription().getName() + " v" + module.getDescription().getVersion());
+                module.getLogger().log(Level.INFO, "Enabling " + module.getDescription().getName() + " v" + module.getDescription().getVersion());
                 module.setEnabled(true);
             } catch (Exception e) {
-                m_logger.log(Level.SEVERE, "Error enabling module '" + module.getDescription().getName() + "'", e);
+                module.getLogger().log(Level.SEVERE, "Error enabling module '" + module.getDescription().getName() + "'", e);
                 success = false;
             }
         }
@@ -99,10 +99,10 @@ public class ModuleLoader {
 
         for (Module module : m_modules) {
             try {
-                m_logger.log(Level.INFO, "Disabling " + module.getDescription().getName() + " v" + module.getDescription().getVersion());
+                module.getLogger().log(Level.INFO, "Disabling " + module.getDescription().getName() + " v" + module.getDescription().getVersion());
                 module.setEnabled(false);
             } catch (Exception e) {
-                m_logger.log(Level.SEVERE, "Error disabling module '" + module.getDescription().getName() + "'", e);
+                module.getLogger().log(Level.SEVERE, "Error disabling module '" + module.getDescription().getName() + "'", e);
                 success = false;
             }
         }
@@ -144,7 +144,7 @@ public class ModuleLoader {
             Constructor<? extends Module> constructor = moduleClass.getConstructor();
             Module module = constructor.newInstance();
 
-            module.init(file, jar, mdf, new File(m_modulesDir, mdf.getName()));
+            module.init(m_plugin, file, jar, mdf, new File(m_modulesDir, mdf.getName()));
 
             m_modules.add(module);
             return true;
