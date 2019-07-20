@@ -1,6 +1,10 @@
 package uk.codingbadgers.plugincore.modules;
 
+import org.bukkit.Bukkit;
 import uk.codingbadgers.plugincore.PluginCore;
+import uk.codingbadgers.plugincore.modules.events.ModuleDisableEvent;
+import uk.codingbadgers.plugincore.modules.events.ModuleEnableEvent;
+import uk.codingbadgers.plugincore.modules.events.ModuleLoadEvent;
 import uk.codingbadgers.plugincore.utilities.FileExtensionFilter;
 
 import java.io.File;
@@ -83,6 +87,8 @@ public class ModuleLoader {
             try {
                 module.getLogger().log(Level.INFO, "Enabling " + module.getDescription().getName() + " v" + module.getDescription().getVersion());
                 module.setEnabled(true);
+
+                Bukkit.getServer().getPluginManager().callEvent(new ModuleEnableEvent(module));
             } catch (Exception e) {
                 module.getLogger().log(Level.SEVERE, "Error enabling module '" + module.getDescription().getName() + "'", e);
                 success = false;
@@ -101,6 +107,8 @@ public class ModuleLoader {
             try {
                 module.getLogger().log(Level.INFO, "Disabling " + module.getDescription().getName() + " v" + module.getDescription().getVersion());
                 module.setEnabled(false);
+
+                Bukkit.getServer().getPluginManager().callEvent(new ModuleDisableEvent(module));
             } catch (Exception e) {
                 module.getLogger().log(Level.SEVERE, "Error disabling module '" + module.getDescription().getName() + "'", e);
                 success = false;
@@ -147,6 +155,7 @@ public class ModuleLoader {
             module.init(m_plugin, file, jar, mdf, new File(m_modulesDir, mdf.getName()));
 
             m_modules.add(module);
+            Bukkit.getServer().getPluginManager().callEvent(new ModuleLoadEvent(module));
             return true;
         } catch (ClassNotFoundException e) {
             m_logger.log(Level.SEVERE, "Invalid module.yml");
