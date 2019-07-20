@@ -36,13 +36,17 @@ public class ModuleLoader {
     public ModuleLoader(PluginCore plugin, String path) {
         m_plugin = plugin;
         m_logger = m_plugin.getLogger();
-        m_modulesDir = new File(m_plugin.getDataFolder(), path);
+        m_modulesDir = new File(path);
 
         findModules();
         generateClassLoader();
     }
 
     private void findModules() {
+        if (!m_modulesDir.exists()) {
+            m_modulesDir.mkdirs();
+        }
+
         m_files = m_modulesDir.listFiles(c_jarFilter);
 
         m_logger.log(Level.INFO, "Found " + m_files.length + " modules");
