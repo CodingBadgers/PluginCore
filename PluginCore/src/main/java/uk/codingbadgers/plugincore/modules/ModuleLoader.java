@@ -14,7 +14,6 @@ import java.io.Reader;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -32,7 +31,7 @@ public class ModuleLoader {
 
     private File[] m_files;
     private List<Module> m_modules = new ArrayList<>();
-    private ClassLoader m_loader;
+    private ModuleClassLoader m_loader;
 
     public ModuleLoader(PluginCore plugin, String path) {
         m_plugin = plugin;
@@ -60,7 +59,7 @@ public class ModuleLoader {
             }
         }
 
-        m_loader = URLClassLoader.newInstance(urls.toArray(new URL[0]), m_plugin.getClass().getClassLoader());
+        m_loader = new ModuleClassLoader(urls.toArray(new URL[0]), m_plugin.getClass().getClassLoader());
     }
 
     public boolean load() {
