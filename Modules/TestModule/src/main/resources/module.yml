@@ -1,0 +1,5 @@
+name: ${project.artifactId}
+description: A test module
+version: ${project.version}
+main: uk.codingbadgers.testmodule.TestModule
+authors: [ TheFish97 ]

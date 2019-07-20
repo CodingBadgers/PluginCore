@@ -1,7 +1,7 @@
 main: uk.codingbadgers.plugincore.PluginCore
 
-name: PluginCore
-version: 1.0
+name: ${project.artifactId}
+version: ${project.version}
 description: Core plugin for the CodingBadgers module system.
 authors: [n3wton, thefish97]
 website: https://github.com/CodingBadgers/PluginCore
