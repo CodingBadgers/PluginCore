@@ -7,6 +7,7 @@ authors: [n3wton, thefish97]
 website: https://github.com/CodingBadgers/PluginCore
 depends: []
 softdepend: []
+api-version: 1.14
 
 commands:
   plugincore:

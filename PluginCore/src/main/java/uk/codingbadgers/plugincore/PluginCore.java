@@ -28,7 +28,7 @@ public class PluginCore extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getCommand("PluginCore").setExecutor(new CommandManager(m_messageSystem));
+        getCommand("PluginCore").setExecutor(new CommandManager(this, m_messageSystem));
 
         m_moduleLoader.enable();
 

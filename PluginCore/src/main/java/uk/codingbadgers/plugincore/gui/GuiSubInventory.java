@@ -2,7 +2,7 @@ package uk.codingbadgers.plugincore.gui;
 
 import uk.codingbadgers.plugincore.PluginCore;
 
-public abstract class GuiSubInventory extends GuiInventory {
+public class GuiSubInventory extends GuiInventory {
 
     final private GuiInventory m_ownerMenu;
 

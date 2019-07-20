@@ -1,5 +1,6 @@
 package uk.codingbadgers.plugincore.modules;
 
+import com.google.common.collect.ImmutableList;
 import org.bukkit.Bukkit;
 import uk.codingbadgers.plugincore.PluginCore;
 import uk.codingbadgers.plugincore.modules.events.ModuleDisableEvent;
@@ -40,6 +41,10 @@ public class ModuleLoader {
 
         findModules();
         generateClassLoader();
+    }
+
+    public List<Module> getModules() {
+        return ImmutableList.copyOf(m_modules);
     }
 
     private void findModules() {

@@ -1,9 +1,6 @@
 package uk.codingbadgers.plugincore.gui;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -45,6 +42,10 @@ public class GuiInventory implements Listener {
     public void createInventory(String title, int rowCount) {
         m_title = title;
         m_rowCount = rowCount;
+
+        if (rowCount > 6) {
+            Bukkit.getLogger().log(Level.SEVERE, "rowCount can not be greater that 6.");
+        }
 
         m_inventory = Bukkit.createInventory(null, m_rowCount * 9, m_title);
     }
@@ -118,7 +119,11 @@ public class GuiInventory implements Listener {
 
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
-        meta.setLore(Arrays.asList(details));
+        if (details != null) {
+            meta.setLore(Arrays.asList(details));
+        } else {
+            meta.setLore(new ArrayList<>());
+        }
         item.setItemMeta(meta);
 
         m_inventory.setItem(slot, item);

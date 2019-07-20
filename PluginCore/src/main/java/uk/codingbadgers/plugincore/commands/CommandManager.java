@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import uk.codingbadgers.plugincore.PluginCore;
 import uk.codingbadgers.plugincore.utilities.MessageSystem;
 
 import java.util.Arrays;
@@ -12,18 +13,23 @@ import java.util.List;
 
 public class CommandManager implements TabExecutor {
 
+    private final PluginCore m_pluginCore;
     private final MessageSystem m_messageSystem;
     private final ICommandHandler m_helpCommand;
     private final ICommandHandler m_unknownCommand;
     private final HashMap<String, ICommandHandler> m_registeredCommands;
 
-    public CommandManager(MessageSystem messageSystem) {
+    public CommandManager(PluginCore pluginCore, MessageSystem messageSystem) {
+        m_pluginCore = pluginCore;
         m_messageSystem = messageSystem;
         m_helpCommand = new HelpCommandHandler();
         m_unknownCommand = new UnknownCommandHandler();
 
         m_registeredCommands = new HashMap<>();
-        m_registeredCommands.put("module", new ModuleCommandHandler());
+
+        ModuleCommandHandler moduleCommandHandler = new ModuleCommandHandler(m_pluginCore);
+        m_registeredCommands.put("module", moduleCommandHandler);
+        m_registeredCommands.put("modules", moduleCommandHandler);
         m_registeredCommands.put("list", new ListCommandHandler());
     }
 
