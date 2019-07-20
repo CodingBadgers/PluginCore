@@ -5,7 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import uk.codingbadgers.plugincore.utilities.MessageSystem;
 
-public class HelpCommand implements ICommandHandler {
+public class HelpCommandHandler implements ICommandHandler {
 
     @Override
     public void Handle(MessageSystem messageSystem, CommandSender sender, Command command, String label, String[] args) {

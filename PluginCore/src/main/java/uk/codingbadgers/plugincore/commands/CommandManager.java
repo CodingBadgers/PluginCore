@@ -19,12 +19,12 @@ public class CommandManager implements TabExecutor {
 
     public CommandManager(MessageSystem messageSystem) {
         m_messageSystem = messageSystem;
-        m_helpCommand = new HelpCommand();
-        m_unknownCommand = new UnknownCommand();
+        m_helpCommand = new HelpCommandHandler();
+        m_unknownCommand = new UnknownCommandHandler();
 
         m_registeredCommands = new HashMap<>();
-        m_registeredCommands.put("module", new ModuleCommand());
-        m_registeredCommands.put("list", new ListCommand());
+        m_registeredCommands.put("module", new ModuleCommandHandler());
+        m_registeredCommands.put("list", new ListCommandHandler());
     }
 
     @Override
