@@ -1,9 +1,11 @@
 package uk.codingbadgers.plugincore.modules;
 
 import uk.codingbadgers.plugincore.PluginCore;
+import uk.codingbadgers.plugincore.modules.commands.ModuleCommand;
 
 import java.io.File;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class Module {
@@ -70,5 +72,10 @@ public abstract class Module {
 
     public Logger getLogger() {
         return m_logger;
+    }
+
+    protected void registerCommand(ModuleCommand command) {
+        m_plugin.getCommandSystem().registerCommand(this, command);
+        m_logger.log(Level.INFO, "Registered command '" + command.getName() + "'");
     }
 }

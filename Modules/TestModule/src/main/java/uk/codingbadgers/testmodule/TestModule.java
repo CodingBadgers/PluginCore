@@ -7,6 +7,8 @@ import java.util.logging.Level;
 public class TestModule extends Module {
     @Override
     public void onEnable() {
+        this.registerCommand(new TestCommandHandler(this));
+
         getLogger().log(Level.INFO, "Enabled " + getDescription().getName());
     }
 
