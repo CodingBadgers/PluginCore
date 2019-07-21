@@ -79,3 +79,25 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 jars
+
+# Spigot
+/DevServer/*.json
+/DevServer/**/.json
+/DevServer/*.yml
+/DevServer/**/*.yml
+/DevServer/*.log
+/DevServer/**/*.log
+/DevServer/*.mca
+/DevServer/**/*.mca
+/DevServer/*.mcr
+/DevServer/**/*.mcr
+/DevServer/*.dat
+/DevServer/**/*.dat
+/DevServer/*.lock
+/DevServer/**/*.lock
+/DevServer/*.properties
+/DevServer/**/*.properties
+/DevServer/*.mcmeta
+/DevServer/**/*.mcmeta
+/DevServer/plugins/*
+/DevServer/modules/*
