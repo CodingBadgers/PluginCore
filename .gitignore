@@ -101,3 +101,4 @@ jars
 /DevServer/**/*.mcmeta
 /DevServer/plugins/*
 /DevServer/modules/*
+/DevServer/logs/*.log.gz
