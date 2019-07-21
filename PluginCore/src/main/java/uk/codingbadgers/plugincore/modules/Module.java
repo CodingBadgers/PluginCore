@@ -1,5 +1,7 @@
 package uk.codingbadgers.plugincore.modules;
 
+import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import uk.codingbadgers.plugincore.PluginCore;
 import uk.codingbadgers.plugincore.modules.commands.ModuleCommand;
 
@@ -51,6 +53,8 @@ public abstract class Module {
         } else {
             onDisable();
             m_enabled = false;
+
+            m_plugin.getCommandSystem().deregisterCommands(this);
         }
     }
 
@@ -75,7 +79,12 @@ public abstract class Module {
     }
 
     protected void registerCommand(ModuleCommand command) {
+        m_logger.log(Level.FINE, "Registered command '" + command.getName() + "'");
         m_plugin.getCommandSystem().registerCommand(this, command);
-        m_logger.log(Level.INFO, "Registered command '" + command.getName() + "'");
+    }
+
+    protected void registerListener(Listener listener) {
+        m_logger.log(Level.FINE, "Registered listener '" + listener.getClass().getName() + "'");
+        Bukkit.getServer().getPluginManager().registerEvents(listener, m_plugin);
     }
 }

@@ -3,6 +3,7 @@ package uk.codingbadgers.plugincore.modules;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.Bukkit;
 import uk.codingbadgers.plugincore.PluginCore;
+import uk.codingbadgers.plugincore.modules.commands.ModuleCommandSystem;
 import uk.codingbadgers.plugincore.modules.events.ModuleDisableEvent;
 import uk.codingbadgers.plugincore.modules.events.ModuleEnableEvent;
 import uk.codingbadgers.plugincore.modules.events.ModuleLoadEvent;

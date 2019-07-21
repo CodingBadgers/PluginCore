@@ -14,7 +14,7 @@ public class ModuleLogger extends Logger {
     private Module m_module;
     private String m_prefix;
 
-    protected ModuleLogger(PluginCore plugin, Module module) {
+    ModuleLogger(PluginCore plugin, Module module) {
         super(module.getDescription().getName(), null);
 
         m_module = module;
