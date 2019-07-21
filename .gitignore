@@ -82,7 +82,7 @@ jars
 
 # Spigot
 /DevServer/*.json
-/DevServer/**/.json
+/DevServer/**/*.json
 /DevServer/*.yml
 /DevServer/**/*.yml
 /DevServer/*.log
