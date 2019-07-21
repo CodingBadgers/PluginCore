@@ -163,6 +163,8 @@ public class ModuleLoader {
             module.init(m_plugin, file, jar, mdf, new File(m_modulesDir, mdf.getName()));
 
             m_modules.add(module);
+            module.onLoad();
+
             Bukkit.getServer().getPluginManager().callEvent(new ModuleLoadEvent(module));
             return true;
         } catch (ClassNotFoundException e) {
