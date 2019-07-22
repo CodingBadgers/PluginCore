@@ -13,6 +13,7 @@
     <modules>
         <module>PluginCore</module>
         <module>Modules/TestModule</module>
+        <module>Modules/ChatModule</module>
     </modules>
 
     <repositories>

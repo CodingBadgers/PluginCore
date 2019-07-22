@@ -1,0 +1,21 @@
+{
+  "name": "default",
+  "format": [
+    {
+      "type": "prefix"
+    },
+    {
+      "type": "name"
+    },
+    {
+      "type": "suffix"
+    },
+    {
+      "type": "text",
+      "text": ":"
+    },
+    {
+      "type": "message"
+    }
+  ]
+}

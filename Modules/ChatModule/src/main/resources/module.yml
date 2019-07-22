@@ -1,0 +1,5 @@
+name: ${project.artifactId}
+description: A chat module
+version: ${project.version}
+main: uk.codingbadgers.chat.ChatModule
+authors: [ TheFish97 ]
