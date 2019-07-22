@@ -15,7 +15,7 @@ public abstract class Module {
     private boolean m_enabled;
     private boolean m_debug;
 
-    private PluginCore m_plugin;
+    protected PluginCore m_plugin;
     private File m_dataFolder;
     private ModuleDescriptionFile m_mdf;
     private JarFile m_jar;
@@ -72,6 +72,10 @@ public abstract class Module {
 
     public ModuleDescriptionFile getDescription() {
         return m_mdf;
+    }
+
+    public PluginCore getPlugin() {
+        return m_plugin;
     }
 
     public Logger getLogger() {
