@@ -27,9 +27,8 @@ public class CommandManager implements TabExecutor {
 
         m_registeredCommands = new HashMap<>();
 
-        ModuleCommandHandler moduleCommandHandler = new ModuleCommandHandler(m_pluginCore);
-        m_registeredCommands.put("module", moduleCommandHandler);
-        m_registeredCommands.put("modules", moduleCommandHandler);
+        m_registeredCommands.put("module", new ModuleCommandHandler(m_pluginCore));
+        m_registeredCommands.put("modules", new ModulesCommandHandler(m_pluginCore));
         m_registeredCommands.put("list", new ListCommandHandler());
     }
 
@@ -60,6 +59,10 @@ public class CommandManager implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length == 1) {
+            return ImmutableList.sortedCopyOf(m_registeredCommands.keySet());
+        }
+
         return ImmutableList.of();
     }
 }
