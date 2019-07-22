@@ -7,6 +7,11 @@ PluginCore is a Bukkit/Spigot plugin for MineCraft which adds an additional laye
 ## Installation
 Simply copy the PluginCore.jar to the `plugins` directory on your Bukkit or Spigot server. The plugin will automatically create a `modules` directory along side the `plugins` folder where modules can be installed.
 
+## Commands
+
+ * `/plugincore list` - Lists all installed modules and their state
+ * `/plugincore modules` - Opens the modules graphical user interface
+ * `/plugincore module <module_name> <stop|start|restart|state|info>` - Allows interaction with a specific module
 
 ## Modules
 
