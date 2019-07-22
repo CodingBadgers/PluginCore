@@ -5,7 +5,7 @@ version: ${project.version}
 description: Core plugin for the CodingBadgers module system.
 authors: [n3wton, thefish97]
 website: https://github.com/CodingBadgers/PluginCore
-depends: []
+depends: [Vault]
 softdepend: []
 api-version: 1.14
 
