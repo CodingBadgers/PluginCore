@@ -1,11 +1,14 @@
 package uk.codingbadgers.plugincore.modules;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import uk.codingbadgers.plugincore.PluginCore;
 import uk.codingbadgers.plugincore.modules.commands.ModuleCommand;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +24,7 @@ public abstract class Module {
     private JarFile m_jar;
     private File m_file;
     private Logger m_logger;
+    private Set<Listener> m_listeners = new HashSet<>();
 
     public Module() {
         m_enabled = false;
@@ -54,7 +58,12 @@ public abstract class Module {
             onDisable();
             m_enabled = false;
 
+            // Unregister all resources created by this module
             m_plugin.getCommandSystem().deregisterCommands(this);
+
+            for (Listener listener : m_listeners) {
+                HandlerList.unregisterAll(listener);
+            }
         }
     }
 
@@ -90,5 +99,10 @@ public abstract class Module {
     protected void registerListener(Listener listener) {
         m_logger.log(Level.FINE, "Registered listener '" + listener.getClass().getName() + "'");
         Bukkit.getServer().getPluginManager().registerEvents(listener, m_plugin);
+        m_listeners.add(listener);
+    }
+
+    public File getFile() {
+        return m_file;
     }
 }

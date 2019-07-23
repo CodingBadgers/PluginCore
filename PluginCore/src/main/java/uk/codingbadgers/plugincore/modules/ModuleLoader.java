@@ -3,7 +3,6 @@ package uk.codingbadgers.plugincore.modules;
 import com.google.common.collect.ImmutableList;
 import org.bukkit.Bukkit;
 import uk.codingbadgers.plugincore.PluginCore;
-import uk.codingbadgers.plugincore.modules.commands.ModuleCommandSystem;
 import uk.codingbadgers.plugincore.modules.events.ModuleDisableEvent;
 import uk.codingbadgers.plugincore.modules.events.ModuleEnableEvent;
 import uk.codingbadgers.plugincore.modules.events.ModuleLoadEvent;
@@ -17,7 +16,9 @@ import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -32,6 +33,7 @@ public class ModuleLoader {
     private File m_modulesDir;
 
     private File[] m_files;
+    private Set<File> m_moduleFiles = new HashSet<>();
     private List<Module> m_modules = new ArrayList<>();
     private ModuleClassLoader m_loader;
 
@@ -59,6 +61,14 @@ public class ModuleLoader {
     }
 
     private void generateClassLoader() {
+        if (m_loader != null) {
+            try {
+                m_loader.close();
+            } catch (IOException e) {
+                m_logger.log(Level.SEVERE, "Failed to close old module class loader", e);
+            }
+        }
+
         List<URL> urls = new ArrayList<>();
 
         for (File file : m_files) {
@@ -72,13 +82,13 @@ public class ModuleLoader {
         m_loader = new ModuleClassLoader(urls.toArray(new URL[0]), m_plugin.getClass().getClassLoader());
     }
 
-    public boolean load() {
+    public boolean loadModules() {
         boolean success = true;
 
         m_logger.log(Level.INFO, "Loading " + m_files.length+ " modules");
 
         for (File file : m_files) {
-            if (!load(file)) {
+            if (load(file) == null) {
                 m_logger.log(Level.SEVERE, "Failed to load module '" + file.getPath() + "'");
                 success = false;
             }
@@ -87,7 +97,7 @@ public class ModuleLoader {
         return success;
     }
 
-    public boolean enable() {
+    public boolean enableModules() {
         boolean success = true;
 
         m_logger.log(Level.INFO, "Enabling " + m_modules.size() + " modules");
@@ -107,7 +117,7 @@ public class ModuleLoader {
         return success;
     }
 
-    public boolean disable() {
+    public boolean disableModules() {
         boolean success = true;
 
         m_logger.log(Level.INFO, "Disabling " + m_modules.size() + " modules");
@@ -127,6 +137,39 @@ public class ModuleLoader {
         return success;
     }
 
+    public void unloadModules() {
+        m_moduleFiles.clear();
+        m_modules.clear();
+
+        findModules();
+        generateClassLoader();
+    }
+
+    public Module loadModule(String file) {
+        return loadModule(new File(m_modulesDir, file));
+    }
+
+    public Module loadModule(File file) {
+        if (m_moduleFiles.contains(file)) {
+            m_plugin.getLogger().log(Level.SEVERE, "Attempting to load already loaded module '" + file.getName() + "'");
+            return null;
+        }
+
+        try {
+            m_loader.addURL(file.toURI().toURL());
+            return load(file);
+        } catch (Exception e) {
+            m_logger.log(Level.SEVERE, "Failed to load module '" + file.getPath() + "'");
+        }
+
+        return null;
+    }
+
+    public void unloadModule(Module module) {
+        m_modules.remove(module);
+        m_moduleFiles.remove(module.getFile());
+    }
+
     private ModuleDescriptionFile loadDescription(JarFile file) throws IOException {
         JarEntry moduleDesc = file.getJarEntry("module.yml");
 
@@ -139,7 +182,7 @@ public class ModuleLoader {
         }
     }
 
-    public boolean load(File file) {
+    private Module load(File file) {
         JarFile jar = null;
 
         try {
@@ -147,14 +190,14 @@ public class ModuleLoader {
             ModuleDescriptionFile mdf = loadDescription(jar);
 
             if (mdf == null) {
-                return false;
+                return null;
             }
 
             String mainClass = mdf.getMainClass();
             Class<?> clazz = Class.forName(mainClass, true, m_loader);
 
             if (clazz == null) {
-                return false;
+                return null;
             }
 
             Class<? extends Module> moduleClass = clazz.asSubclass(Module.class);
@@ -163,23 +206,28 @@ public class ModuleLoader {
 
             module.init(m_plugin, file, jar, mdf, new File(m_modulesDir, mdf.getName()));
 
+            m_moduleFiles.add(file);
             m_modules.add(module);
             module.onLoad();
 
             Bukkit.getServer().getPluginManager().callEvent(new ModuleLoadEvent(module));
-            return true;
+            return module;
         } catch (ClassNotFoundException e) {
             m_logger.log(Level.SEVERE, "Invalid module.yml");
-        } catch (Throwable t) {
-            m_logger.log(Level.SEVERE, "An unknown error has occurred whilst loading a module.", t);
-        } finally {
-            try {
-                jar.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+        } catch (Exception e) {
+            m_logger.log(Level.SEVERE, "An unknown error has occurred whilst loading a module.", e);
+        }
+
+        return null;
+    }
+
+    public Module getModule(String name) {
+        for (Module m: m_modules) {
+            if (m.getDescription().getName().equalsIgnoreCase(name)) {
+                return m;
             }
         }
 
-        return false;
+        return null;
     }
 }

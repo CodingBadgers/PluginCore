@@ -36,7 +36,7 @@ public class PluginCore extends JavaPlugin {
         m_commandSystem = new ModuleCommandSystem(this);
         m_playerManager = new CorePlayerManager(this);
 
-        m_moduleLoader.load();
+        m_moduleLoader.loadModules();
     }
 
     @Override
@@ -47,7 +47,7 @@ public class PluginCore extends JavaPlugin {
 
         Bukkit.getServer().getPluginManager().registerEvents(m_playerManager, this);
 
-        m_moduleLoader.enable();
+        m_moduleLoader.enableModules();
 
         // Done
         getLogger().log(Level.INFO, "Enabled " + getDescription().getName() + " version: " + getDescription().getVersion() );
@@ -55,7 +55,7 @@ public class PluginCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        m_moduleLoader.disable();
+        m_moduleLoader.disableModules();
 
         getLogger().log(Level.INFO, "Disabled " + getDescription().getName());
     }
