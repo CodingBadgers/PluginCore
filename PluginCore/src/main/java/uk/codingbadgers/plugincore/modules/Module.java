@@ -36,6 +36,7 @@ public abstract class Module {
         m_jar = jar;
         m_mdf = mdf;
         m_dataFolder = dataFolder;
+        m_dataFolder.mkdirs();
 
         m_logger = new ModuleLogger(plugin, this);
     }
@@ -89,6 +90,10 @@ public abstract class Module {
 
     public Logger getLogger() {
         return m_logger;
+    }
+
+    public File getDataFolder() {
+        return m_dataFolder;
     }
 
     protected void registerCommand(ModuleCommand command) {
