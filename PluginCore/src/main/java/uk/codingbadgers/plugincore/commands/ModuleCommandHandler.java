@@ -34,7 +34,8 @@ public class ModuleCommandHandler implements ICommandHandler {
             }
 
             ReloadModules(messageSystem, sender);
-            return;
+        } else {
+            ShowModuleHelp(messageSystem, sender);
         }
     }
 
