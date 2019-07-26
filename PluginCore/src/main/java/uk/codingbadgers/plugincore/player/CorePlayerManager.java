@@ -8,9 +8,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import uk.codingbadgers.plugincore.PluginCore;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class CorePlayerManager implements Listener {
 
@@ -21,7 +23,7 @@ public class CorePlayerManager implements Listener {
         m_plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     @SuppressWarnings("unused")
     public void onPlayerJoin(PlayerJoinEvent e) {
         final Player player = e.getPlayer();
@@ -29,7 +31,7 @@ public class CorePlayerManager implements Listener {
         m_players.put(player.getUniqueId(), new CorePlayer(m_plugin, player));
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     @SuppressWarnings("unused")
     public void onPlayerQuit(PlayerQuitEvent e) {
         final Player player = e.getPlayer();
@@ -38,6 +40,12 @@ public class CorePlayerManager implements Listener {
     }
 
     public CorePlayer getPlayer(Player player) {
-        return m_players.get(player.getUniqueId());
+        CorePlayer corePlayer = m_players.get(player.getUniqueId());
+
+        if (corePlayer == null) {
+            m_plugin.getLogger().log(Level.SEVERE, "Could not find core player for player '" + player.getName() + "'");
+        }
+
+        return corePlayer;
     }
 }
