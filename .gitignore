@@ -106,3 +106,5 @@ jars
 /DevServer/papermc.jar
 /DevServer/papermc_version.txt
 /DevServer/vault_version.txt
+/DevServer/world/**
+/DevServer/world_*/**
