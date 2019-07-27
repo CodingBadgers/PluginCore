@@ -1,4 +1,4 @@
-package uk.codingbadgers.chat.commands;
+package uk.codingbadgers.chat.commands.chat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

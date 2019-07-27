@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import uk.codingbadgers.chat.channels.ChannelManager;
 import uk.codingbadgers.chat.commands.ChatCommandHandler;
+import uk.codingbadgers.chat.commands.PrivateMessageCommandHandler;
 import uk.codingbadgers.chat.listeners.PlayerListener;
 import uk.codingbadgers.plugincore.json.JsonExclusionStrategy;
 import uk.codingbadgers.plugincore.modules.Module;
@@ -29,6 +30,7 @@ public class ChatModule extends Module {
         this.registerListener(new PlayerListener(this));
 
         this.registerCommand(new ChatCommandHandler(this));
+        this.registerCommand(new PrivateMessageCommandHandler(this));
 
         m_channelManager.loadChannels();
 

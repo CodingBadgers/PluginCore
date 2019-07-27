@@ -1,4 +1,4 @@
-package uk.codingbadgers.chat.commands;
+package uk.codingbadgers.chat.commands.chat;
 
 import com.google.common.collect.ImmutableList;
 import org.bukkit.command.Command;
@@ -15,7 +15,7 @@ public class ChannelCommandHandler extends ModuleChildCommand {
 
     private ChannelManager m_channelManager;
 
-    protected ChannelCommandHandler(ChatModule module) {
+    public ChannelCommandHandler(ChatModule module) {
         super(module, "channel");
 
         m_channelManager = module.getChannelManager();
