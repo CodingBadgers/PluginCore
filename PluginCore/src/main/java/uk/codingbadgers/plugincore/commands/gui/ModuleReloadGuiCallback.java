@@ -22,9 +22,9 @@ public class ModuleReloadGuiCallback implements GuiCallback {
 
     @Override
     public void onClick(GuiInventory inventory, InventoryClickEvent clickEvent) {
-        if (m_module.isEnabled()) {
-            m_moduleLoader.disableModule(m_module);
-        }
+        m_moduleLoader.disableModule(m_module);
+        m_moduleLoader.unloadModule(m_module);
+        m_moduleLoader.unloadModule(m_module);
         m_moduleLoader.enableModule(m_module);
         m_modulesCommandHandler.showModulesGui((Player)clickEvent.getWhoClicked());
     }

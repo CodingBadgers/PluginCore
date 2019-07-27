@@ -140,6 +140,10 @@ public class ModuleLoader {
     }
 
     public boolean disableModule(Module module) {
+        if (!module.isEnabled()) {
+            return true;
+        }
+
         try {
             module.getLogger().log(Level.INFO, "Disabling " + module.getDescription().getName() + " v" + module.getDescription().getVersion());
             module.setEnabled(false);
