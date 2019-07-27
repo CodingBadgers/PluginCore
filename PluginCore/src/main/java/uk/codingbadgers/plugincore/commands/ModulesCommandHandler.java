@@ -1,6 +1,5 @@
 package uk.codingbadgers.plugincore.commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -23,38 +22,39 @@ public class ModulesCommandHandler implements ICommandHandler {
     private final PluginCore m_plugin;
     private final ModuleLoader m_moduleLoader;
 
-    public ModulesCommandHandler(PluginCore plugin) {
+    ModulesCommandHandler(PluginCore plugin) {
         m_plugin = plugin;
         m_moduleLoader = plugin.getModuleLoader();
     }
 
     @Override
-    public void Handle(MessageSystem messageSystem, CommandSender sender, Command command, String label, String[] args) {
+    public String getHelpMessage() {
+        return "Opens the modules graphical user interface.";
+    }
 
-        if (args.length == 0) {
-            if (sender instanceof Player) {
-                ShowModuleGui((Player)sender);
-            } else {
-                ShowModuleHelp(messageSystem, sender);
-            }
+    @Override
+    public void handle(MessageSystem messageSystem, CommandSender sender, Command command, String label, String[] args) {
+        // Invalid args
+        if (args.length != 0) {
+            messageSystem.SendMessage(sender, "The 'modules' command does not take any arguments.");
             return;
         }
 
+        // Command can only be ran by online players
+        if (!(sender instanceof Player)) {
+            messageSystem.SendMessage(sender, "The 'modules' command can only be executed by online players.");
+            return;
+        }
+
+        ShowModulesGui((Player)sender);
     }
 
-    private void ShowModuleGui(Player player) {
-        GuiInventory moduleInventory = CreateModuleGui();
+    private void ShowModulesGui(Player player) {
+        GuiInventory moduleInventory = CreateModulesGui();
         moduleInventory.open(player);
     }
 
-    private void ShowModuleHelp(MessageSystem messageSystem, CommandSender sender) {
-        messageSystem.SendMessage(sender, ChatColor.GOLD + "reload" + ChatColor.RESET + " - Stops the module, then reloads and starts the module.");
-        messageSystem.SendMessage(sender, ChatColor.GOLD + "start" + ChatColor.RESET + " - Starts a module that is not already running.");
-        messageSystem.SendMessage(sender, ChatColor.GOLD + "stop" + ChatColor.RESET + " - Stops a running module.");
-        messageSystem.SendMessage(sender, ChatColor.GOLD + "update <url>" + ChatColor.RESET + " - Stops a running module, downloads a Jar file from a provided Url, starts the updated module.");
-    }
-
-    private GuiInventory CreateModuleGui() {
+    private GuiInventory CreateModulesGui() {
         List<Module> modules = m_moduleLoader.getModules();
 
         GuiInventory moduleInventory = new GuiInventory(m_plugin);

@@ -7,36 +7,36 @@ import org.bukkit.command.TabExecutor;
 import uk.codingbadgers.plugincore.PluginCore;
 import uk.codingbadgers.plugincore.utilities.MessageSystem;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class CommandManager implements TabExecutor {
 
-    private final PluginCore m_pluginCore;
     private final MessageSystem m_messageSystem;
     private final ICommandHandler m_helpCommand;
     private final ICommandHandler m_unknownCommand;
-    private final HashMap<String, ICommandHandler> m_registeredCommands;
+    private final Map<String, ICommandHandler> m_registeredCommands;
 
     public CommandManager(PluginCore pluginCore, MessageSystem messageSystem) {
-        m_pluginCore = pluginCore;
         m_messageSystem = messageSystem;
-        m_helpCommand = new HelpCommandHandler();
+        m_helpCommand = new HelpCommandHandler(this);
         m_unknownCommand = new UnknownCommandHandler();
 
-        m_registeredCommands = new HashMap<>();
+        m_registeredCommands = new TreeMap<>();
 
-        m_registeredCommands.put("module", new ModuleCommandHandler(m_pluginCore));
-        m_registeredCommands.put("modules", new ModulesCommandHandler(m_pluginCore));
-        m_registeredCommands.put("list", new ListCommandHandler());
+        m_registeredCommands.put("module", new ModuleCommandHandler(pluginCore));
+        m_registeredCommands.put("modules", new ModulesCommandHandler(pluginCore));
+        m_registeredCommands.put("list", new ListCommandHandler(pluginCore));
+    }
+
+    Set<Map.Entry<String, ICommandHandler>> getCommandHandlers() {
+        return m_registeredCommands.entrySet();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
         if (args.length == 0) {
-            m_helpCommand.Handle(m_messageSystem, sender, command, label, args);
+            m_helpCommand.handle(m_messageSystem, sender, command, label, args);
             return true;
         }
 
@@ -49,11 +49,11 @@ public class CommandManager implements TabExecutor {
                 subArgs = Arrays.copyOfRange(args, 1, args.length);
             }
 
-            commandHandler.Handle(m_messageSystem, sender, command, subCommand, subArgs);
+            commandHandler.handle(m_messageSystem, sender, command, subCommand, subArgs);
             return true;
         }
 
-        m_unknownCommand.Handle(m_messageSystem, sender, command, label, args);
+        m_unknownCommand.handle(m_messageSystem, sender, command, label, args);
         return true;
     }
 

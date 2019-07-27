@@ -12,16 +12,19 @@ import java.io.File;
 
 public class ModuleCommandHandler implements ICommandHandler {
 
-    private final PluginCore m_plugin;
     private final ModuleLoader m_moduleLoader;
 
-    public ModuleCommandHandler(PluginCore plugin) {
-        m_plugin = plugin;
+    ModuleCommandHandler(PluginCore plugin) {
         m_moduleLoader = plugin.getModuleLoader();
     }
 
     @Override
-    public void Handle(MessageSystem messageSystem, CommandSender sender, Command command, String label, String[] args) {
+    public String getHelpMessage() {
+        return "Allows interaction with modules, such as stop, start, restart and update.";
+    }
+
+    @Override
+    public void handle(MessageSystem messageSystem, CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
             ShowModuleHelp(messageSystem, sender);
             return;

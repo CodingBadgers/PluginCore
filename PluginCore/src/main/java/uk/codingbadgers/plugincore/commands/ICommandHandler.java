@@ -5,5 +5,6 @@ import org.bukkit.command.CommandSender;
 import uk.codingbadgers.plugincore.utilities.MessageSystem;
 
 public interface ICommandHandler {
-    void Handle(MessageSystem messageSystem, CommandSender sender, Command command, String label, String[] args);
+    String getHelpMessage();
+    void handle(MessageSystem messageSystem, CommandSender sender, Command command, String label, String[] args);
 }

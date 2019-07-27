@@ -8,7 +8,12 @@ import uk.codingbadgers.plugincore.utilities.MessageSystem;
 public class UnknownCommandHandler implements ICommandHandler {
 
     @Override
-    public void Handle(MessageSystem messageSystem, CommandSender sender, Command command, String label, String[] args) {
+    public String getHelpMessage() {
+        return null;
+    }
+
+    @Override
+    public void handle(MessageSystem messageSystem, CommandSender sender, Command command, String label, String[] args) {
         messageSystem.SendMessage(sender, "Unknown command " + ChatColor.RED + args[0] + ChatColor.RESET + ".");
         messageSystem.SendMessage(sender, "Enter '/plugincore' for help.");
     }
