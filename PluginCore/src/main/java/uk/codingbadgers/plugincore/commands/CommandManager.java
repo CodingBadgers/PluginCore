@@ -1,7 +1,6 @@
 package uk.codingbadgers.plugincore.commands;
 
 import com.google.common.collect.ImmutableList;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -32,19 +31,35 @@ public class CommandManager extends SubCommandHandler implements TabExecutor {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length <= 1) {
-            return ImmutableList.sortedCopyOf(getSubCommands().keySet());
+        if (args.length == 0) {
+            return ImmutableList.of();
         }
 
-        // TODO: Recurse to lower sub-command handlers
-        String subCommand = args[0];
-        if (getSubCommands().containsKey(subCommand)) {
-            ICommandHandler commandHandler = getSubCommands().get(subCommand);
-            if (commandHandler instanceof SubCommandHandler) {
-                return ImmutableList.sortedCopyOf(((SubCommandHandler) commandHandler).getSubCommands().keySet());
+        int subIndex = 0;
+        String subCommand = args[subIndex];
+        SubCommandHandler subHandler = this;
+
+        while (true) {
+            if (subHandler.getSubCommands().containsKey(subCommand)) {
+                ICommandHandler commandHandler = subHandler.getSubCommands().get(subCommand);
+                if (commandHandler instanceof SubCommandHandler) {
+                    subIndex++;
+                    if (subIndex >= args.length) {
+                        return ImmutableList.sortedCopyOf(subHandler.getSubCommands().keySet());
+                    }
+
+                    subHandler = (SubCommandHandler) commandHandler;
+
+                    subCommand = args[subIndex];
+                    if (subCommand.trim().length() == 0) {
+                        return ImmutableList.sortedCopyOf(subHandler.getSubCommands().keySet());
+                    }
+                    continue;
+                }
+                return ImmutableList.of();
             }
-        }
 
-        return ImmutableList.of();
+            return ImmutableList.sortedCopyOf(subHandler.getSubCommands().keySet());
+        }
     }
 }

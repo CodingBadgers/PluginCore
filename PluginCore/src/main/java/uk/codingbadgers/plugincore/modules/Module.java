@@ -24,7 +24,7 @@ public abstract class Module {
     private JarFile m_jar;
     private File m_file;
     private Logger m_logger;
-    private Set<Listener> m_listeners = new HashSet<>();
+    private final Set<Listener> m_listeners = new HashSet<>();
 
     public Module() {
         m_enabled = false;
@@ -78,6 +78,10 @@ public abstract class Module {
 
     public boolean isDebug() {
         return m_debug;
+    }
+
+    public String getName() {
+        return getDescription().getName();
     }
 
     public ModuleDescriptionFile getDescription() {
