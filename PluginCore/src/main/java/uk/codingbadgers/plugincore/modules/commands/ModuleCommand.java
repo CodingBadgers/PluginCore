@@ -16,7 +16,7 @@ import java.util.List;
 import uk.codingbadgers.plugincore.modules.Module;
 
 public abstract class ModuleCommand extends Command implements TabCompleter {
-    private final Module m_module;
+    protected final Module m_module;
 
     private List<ModuleChildCommand> m_childCommands = new ArrayList<>();
 

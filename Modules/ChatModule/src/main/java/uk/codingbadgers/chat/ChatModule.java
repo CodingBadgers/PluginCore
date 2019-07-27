@@ -8,6 +8,8 @@ import uk.codingbadgers.chat.listeners.PlayerListener;
 import uk.codingbadgers.plugincore.json.JsonExclusionStrategy;
 import uk.codingbadgers.plugincore.modules.Module;
 
+import java.util.logging.Level;
+
 public class ChatModule extends Module {
 
     public static final Gson GSON = new GsonBuilder()
@@ -29,11 +31,15 @@ public class ChatModule extends Module {
         this.registerCommand(new ChatCommandHandler(this));
 
         m_channelManager.loadChannels();
+
+        getLogger().log(Level.INFO, "Enabled " + getDescription().getName() +
+                " v" + getDescription().getVersion() + " successfully");
     }
 
     @Override
     public void onDisable() {
-
+        getLogger().log(Level.INFO, "Disabled " + getDescription().getName() +
+                " v" + getDescription().getVersion() + " successfully");
     }
 
     public ChannelManager getChannelManager() {

@@ -42,6 +42,7 @@ public class ChatPlayerData implements CorePlayerData {
             m_listeningChannels.add(channel);
         }
     }
+
     public List<Channel> getChannels() {
         return m_listeningChannels;
     }
@@ -53,7 +54,6 @@ public class ChatPlayerData implements CorePlayerData {
     public void leaveChannel(Channel channel) {
         m_listeningChannels.remove(channel);
     }
-
 
     @Override
     public boolean save(File dataFile) throws IOException {

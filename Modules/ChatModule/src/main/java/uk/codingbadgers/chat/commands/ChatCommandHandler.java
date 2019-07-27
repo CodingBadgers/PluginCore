@@ -9,5 +9,6 @@ public class ChatCommandHandler extends ModuleCommand {
         super(module, "chat", "Chat module core command", "/ch help", ImmutableList.of("ch"));
 
         this.registerChildCommand(new ChannelCommandHandler(module));
+        this.registerChildCommand(new UserCommandHandler(module));
     }
 }
