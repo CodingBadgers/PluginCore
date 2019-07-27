@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -26,10 +27,16 @@ public class Channel {
         MESSAGE,
     }
 
-    public class MessagePart {
-        public MessagePartType type;
-        public String value;
-        public ChatColor color;
+    class MessagePart {
+        MessagePartType type;
+        String value;
+        ChatColor color;
+
+        MessagePart(MessagePartType type, String value, ChatColor color) {
+            this.type = type;
+            this.value = value;
+            this.color = color;
+        }
     }
 
     @NotSerialized
@@ -40,7 +47,13 @@ public class Channel {
     @SerializedName("name")
     private String m_name;
     @SerializedName("format")
-    private List<MessagePart> m_format = new ArrayList<>();
+    private List<MessagePart> m_format = new ArrayList<>(Arrays.asList(
+            new MessagePart(MessagePartType.PREFIX, "", ChatColor.WHITE),
+            new MessagePart(MessagePartType.NAME, "", ChatColor.WHITE),
+            new MessagePart(MessagePartType.SUFFIX, "", ChatColor.WHITE),
+            new MessagePart(MessagePartType.TEXT, ": ", ChatColor.WHITE),
+            new MessagePart(MessagePartType.MESSAGE, "", ChatColor.WHITE)
+    ));
 
     public Channel(String name) {
         m_name = name;
@@ -92,29 +105,38 @@ public class Channel {
         for (MessagePart part : m_format) {
             switch (part.type) {
                 case PREFIX:
+                    if (chat == null) {
+                        break;
+                    }
+
                     String prefixStr = ChatColor.translateAlternateColorCodes('&', chat.getPlayerPrefix(player.getPlayer()));
-                    BaseComponent[] prefix = TextComponent.fromLegacyText(prefixStr);
+                    BaseComponent[] prefix = TextComponent.fromLegacyText(prefixStr, part.color);
                     builder.append(prefix);
                     break;
 
                 case NAME:
                     BaseComponent name = new TextComponent(player.getName());
+                    name.setColor(part.color);
                     name.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + player.getName() + " "));
                     builder.append(name);
                     break;
 
                 case SUFFIX:
+                    if (chat == null) {
+                        break;
+                    }
+
                     String suffixStr = ChatColor.translateAlternateColorCodes('&', chat.getPlayerSuffix(player.getPlayer()));
-                    BaseComponent[] suffix = TextComponent.fromLegacyText(suffixStr);
+                    BaseComponent[] suffix = TextComponent.fromLegacyText(suffixStr, part.color);
                     builder.append(suffix);
                     break;
 
                 case MESSAGE:
-                    builder.append(TextComponent.fromLegacyText(msg));
+                    builder.append(TextComponent.fromLegacyText(msg, part.color));
                     break;
 
                 case TEXT:
-                    BaseComponent[] text = TextComponent.fromLegacyText(part.value);
+                    BaseComponent[] text = TextComponent.fromLegacyText(part.value, part.color);
                     builder.append(text);
                     break;
             }

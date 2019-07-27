@@ -1,14 +1,9 @@
 package uk.codingbadgers.chat.channels;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import uk.codingbadgers.chat.ChatModule;
-import uk.codingbadgers.plugincore.PluginCore;
-import uk.codingbadgers.plugincore.json.JsonExclusionStrategy;
 import uk.codingbadgers.plugincore.utilities.FileExtensionFilter;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -36,7 +31,7 @@ public class ChannelManager {
             try (FileReader reader = new FileReader(file)) {
                 Channel channel = ChatModule.GSON.fromJson(reader, Channel.class);
                 addChannel(channel);
-                m_module.getLogger().log(Level.INFO, "Loaded channel '{0}'", channel.getName());
+                m_module.getLogger().log(Level.INFO, "Loaded channel \"{0}\"", channel.getName());
             } catch (IOException e) {
                 m_module.getLogger().log(Level.SEVERE, "Error loading channel from '" + file.getName() + "'", e);
             }
@@ -47,7 +42,7 @@ public class ChannelManager {
          */
         if (m_channels.size() == 0) {
             addChannel(new Channel("default"));
-            m_module.getLogger().log(Level.INFO, "Added default channel 'default'");
+            m_module.getLogger().log(Level.INFO, "Added default channel \"default\"");
         }
     }
 
