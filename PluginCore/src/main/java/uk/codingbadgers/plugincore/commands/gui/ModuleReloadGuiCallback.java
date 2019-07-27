@@ -8,13 +8,13 @@ import uk.codingbadgers.plugincore.gui.GuiInventory;
 import uk.codingbadgers.plugincore.modules.Module;
 import uk.codingbadgers.plugincore.modules.ModuleLoader;
 
-public class ModuleRestartGuiCallback implements GuiCallback {
+public class ModuleReloadGuiCallback implements GuiCallback {
 
     private final Module m_module;
     private final ModuleLoader m_moduleLoader;
     private final ModulesCommandHandler m_modulesCommandHandler;
 
-    public ModuleRestartGuiCallback(ModulesCommandHandler modulesCommandHandler, ModuleLoader moduleLoader, Module module) {
+    public ModuleReloadGuiCallback(ModulesCommandHandler modulesCommandHandler, ModuleLoader moduleLoader, Module module) {
         m_module = module;
         m_moduleLoader = moduleLoader;
         m_modulesCommandHandler = modulesCommandHandler;
