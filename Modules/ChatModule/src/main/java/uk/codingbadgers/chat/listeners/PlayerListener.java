@@ -14,10 +14,12 @@ import uk.codingbadgers.plugincore.player.CorePlayerManager;
 
 public class PlayerListener implements Listener {
 
+    private final ChatModule m_module;
     private final CorePlayerManager m_playerManager;
     private final ChannelManager m_channelManager;
 
     public PlayerListener(ChatModule module) {
+        m_module = module;
         m_playerManager = module.getPlugin().getPlayerManager();
         m_channelManager = module.getChannelManager();
     }
@@ -30,26 +32,28 @@ public class PlayerListener implements Listener {
 
         e.setCancelled(true);
 
-        Channel channel = m_channelManager.getChannel("default");
-        channel.sendMessage(player, e.getMessage());
+        data.getActiveChannel().sendMessage(m_module, player, e.getMessage());
     }
 
     @EventHandler
     @SuppressWarnings("unused")
     public void onPlayerJoin(PlayerJoinEvent e) {
         CorePlayer player = m_playerManager.getPlayer(e.getPlayer());
-        Channel channel = m_channelManager.getChannel("default");
 
-        channel.playerJoin(player);
+        player.addPlayerData(new ChatPlayerData(m_module, player));
     }
 
     @EventHandler
     @SuppressWarnings("unused")
     public void onPlayerLeave(PlayerQuitEvent e) {
         CorePlayer player = m_playerManager.getPlayer(e.getPlayer());
-        Channel channel = m_channelManager.getChannel("default");
+        ChatPlayerData data = player.getPlayerData(ChatPlayerData.class);
 
-        channel.playerLeave(player);
+        player.removePlayerData(ChatPlayerData.class);
+
+        for (Channel channel : data.getChannels()) {
+            channel.playerLeave(player);
+        }
     }
 
 }

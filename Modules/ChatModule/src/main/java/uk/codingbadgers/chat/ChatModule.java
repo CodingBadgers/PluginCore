@@ -1,11 +1,19 @@
 package uk.codingbadgers.chat;
 
-import uk.codingbadgers.chat.channels.Channel;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import uk.codingbadgers.chat.channels.ChannelManager;
+import uk.codingbadgers.chat.commands.ChatCommandHandler;
 import uk.codingbadgers.chat.listeners.PlayerListener;
+import uk.codingbadgers.plugincore.json.JsonExclusionStrategy;
 import uk.codingbadgers.plugincore.modules.Module;
 
 public class ChatModule extends Module {
+
+    public static final Gson GSON = new GsonBuilder()
+            .setExclusionStrategies(new JsonExclusionStrategy())
+            .setPrettyPrinting()
+            .create();
 
     private ChannelManager m_channelManager;
 
@@ -18,7 +26,9 @@ public class ChatModule extends Module {
     public void onEnable() {
         this.registerListener(new PlayerListener(this));
 
-        m_channelManager.addChannel(new Channel(this, "default"));
+        this.registerCommand(new ChatCommandHandler(this));
+
+        m_channelManager.loadChannels();
     }
 
     @Override
