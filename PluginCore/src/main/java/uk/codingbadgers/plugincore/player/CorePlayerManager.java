@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import uk.codingbadgers.plugincore.PluginCore;
 
-import java.util.Arrays;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -17,10 +17,12 @@ import java.util.logging.Level;
 public class CorePlayerManager implements Listener {
 
     private final PluginCore m_plugin;
+    private final File m_dataFolder;
     private Map<UUID, CorePlayer> m_players = new HashMap<>();
 
     public CorePlayerManager(PluginCore plugin) {
         m_plugin = plugin;
+        m_dataFolder = new File(plugin.getDataFolder(), "player_data");
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -28,15 +30,18 @@ public class CorePlayerManager implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e) {
         final Player player = e.getPlayer();
 
-        m_players.put(player.getUniqueId(), new CorePlayer(m_plugin, player));
+        m_players.put(player.getUniqueId(), new CorePlayer(m_plugin, player, m_dataFolder));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     @SuppressWarnings("unused")
     public void onPlayerQuit(PlayerQuitEvent e) {
-        final Player player = e.getPlayer();
+        final Player p = e.getPlayer();
 
-        m_players.remove(player.getUniqueId());
+        CorePlayer player = m_players.get(p.getUniqueId());
+        player.save();
+
+        m_players.remove(p.getUniqueId());
     }
 
     public CorePlayer getPlayer(Player player) {
