@@ -72,38 +72,49 @@ public abstract class ModuleCommand extends Command implements TabCompleter {
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
-        List<String> completions = null;
+        // TODO this code needs cleaning up and optimising
+        ImmutableList.Builder<String> builder = ImmutableList.builder();
 
-        try {
-            completions = onTabComplete(sender, this, alias, args);
-        } catch (Throwable ex) {
-            StringBuilder message = new StringBuilder();
-            message.append("Unhandled exception during tab completion for command '/").append(alias).append(' ');
-            for (String arg : args) {
-                message.append(arg).append(' ');
+        if (m_childCommands.size() >= 1) {
+            if (args.length == 1) {
+                for (ModuleChildCommand child : m_childCommands) {
+                    if (child.getLabel().startsWith(args[0])) {
+                        builder.add(child.getLabel());
+                    }
+                }
+            } else {
+                for (ModuleChildCommand child : m_childCommands) {
+                    if (child.getLabel().equalsIgnoreCase(args[0])) {
+                        builder.addAll(child.tabComplete(sender, alias, args));
+                    }
+                }
             }
-            message.deleteCharAt(message.length() - 1).append("' in plugin ").append(m_module.getDescription().getName());
-            throw new CommandException(message.toString(), ex);
+        } else {
+            try {
+                List<String> completions = onTabComplete(sender, this, alias, Arrays.copyOfRange(args, 1, args.length));
+
+                if (completions != null) {
+                    builder.addAll(completions);
+                }
+            } catch (Throwable ex) {
+                StringBuilder message = new StringBuilder();
+                message.append("Unhandled exception during tab completion for command '/").append(alias).append(' ');
+                for (String arg : args) {
+                    message.append(arg).append(' ');
+                }
+                message.deleteCharAt(message.length() - 1).append("' in plugin ").append(m_module.getDescription().getName());
+                throw new CommandException(message.toString(), ex);
+            }
         }
 
-        List<String> sortable = new ArrayList<>(completions);
+        List<String> sortable = new ArrayList<>(builder.build());
         sortable.sort(String.CASE_INSENSITIVE_ORDER);
         return ImmutableList.copyOf(sortable);
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        ImmutableList.Builder<String> builder = ImmutableList.builder();
-
-        if (m_childCommands.size() >= 1 && args.length == 1) {
-            for (ModuleChildCommand child : m_childCommands) {
-                if (child.getLabel().startsWith(args[0])) {
-                    builder.add(child.getLabel());
-                }
-            }
-        }
-
-        return builder.build();
+        return new ArrayList<>();
     }
 
     protected void sendMessage(CommandSender sender, String msg) {
