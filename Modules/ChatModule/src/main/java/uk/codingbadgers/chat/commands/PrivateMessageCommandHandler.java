@@ -3,11 +3,14 @@ package uk.codingbadgers.chat.commands;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.w3c.dom.Text;
 import uk.codingbadgers.plugincore.modules.Module;
 import uk.codingbadgers.plugincore.modules.commands.ModuleCommand;
 
@@ -44,25 +47,27 @@ public class PrivateMessageCommandHandler extends ModuleCommand {
     private void sendPrivateMessage(CommandSender sender, Player target, String message) {
         ComponentBuilder builder = new ComponentBuilder("");
 
-        builder.color(ChatColor.GRAY);
+        builder.color(ChatColor.DARK_GRAY);
         builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/pm " + target.getName() + " "));
+        builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("Message " + target.getName())));
         builder.append("To [");
         builder.append(target.getName());
         builder.append("]: ");
         builder.append(message);
-        builder.reset();
+        builder.color(ChatColor.GRAY);
 
         sender.spigot().sendMessage(builder.create());
 
         builder = new ComponentBuilder("");
 
-        builder.color(ChatColor.GRAY);
+        builder.color(ChatColor.DARK_GRAY);
         builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/pm " + sender.getName() + " "));
+        builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("Reply to " + target.getName())));
         builder.append("From [");
         builder.append(sender.getName());
         builder.append("]: ");
         builder.append(message);
-        builder.reset();
+        builder.color(ChatColor.GRAY);
 
         target.spigot().sendMessage(builder.create());
     }

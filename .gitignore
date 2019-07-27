@@ -108,3 +108,5 @@ jars
 /DevServer/vault_version.txt
 /DevServer/world/**
 /DevServer/world_*/**
+
+\.idea/
