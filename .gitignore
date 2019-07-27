@@ -102,3 +102,7 @@ jars
 /DevServer/plugins/*
 /DevServer/modules/*
 /DevServer/logs/*.log.gz
+/DevServer/cache/**
+/DevServer/papermc.jar
+/DevServer/papermc_version.txt
+/DevServer/vault_version.txt

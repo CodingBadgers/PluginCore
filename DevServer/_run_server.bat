@@ -1,16 +1,2 @@
-:: Delete existing plugins
-if exist "plugins\PluginCore-*.jar" del /F "plugins\PluginCore-*.jar"
-
-:: Delete existing modules
-del /F "modules\*.jar"
-
-:: Copy the core plugin and rename to not include version info
-mkdir "plugins"
-copy "..\jars\PluginCore-*.jar" "plugins" /Y
-
-:: Copy modules
-mkdir "modules"
-copy "..\jars\*Module*.jar" "modules" /Y
-
-:: Start the server
-java -jar spigot.jar
+:: Wrapper to run the powershell script as IntelliJ can't launch a .ps1 script
+Powershell.exe -executionpolicy remotesigned -File _run_server.ps1
