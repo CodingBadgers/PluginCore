@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -20,7 +19,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import uk.codingbadgers.plugincore.PluginCore;
 
 public class GuiInventory implements Listener {
-    private final PluginCore m_plugin;
     private String m_title;
     private int m_rowCount;
 
@@ -30,13 +28,12 @@ public class GuiInventory implements Listener {
     private Inventory m_inventory;
 
     public GuiInventory(PluginCore plugin) {
-        m_plugin = plugin;
 
-        m_plugin.getServer().getPluginManager().registerEvents(this, m_plugin);
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
-        m_subMenus = new HashMap<String, GuiSubInventory>();
-        m_items = new HashMap<String, ItemStack>();
-        m_callbacks = new HashMap<Integer, GuiCallback>();
+        m_subMenus = new HashMap<>();
+        m_items = new HashMap<>();
+        m_callbacks = new HashMap<>();
     }
 
     public void createInventory(String title, int rowCount) {
@@ -66,8 +63,20 @@ public class GuiInventory implements Listener {
         }
     }
 
+    public void close(HumanEntity human, boolean force) {
+        if (!(human instanceof Player)) {
+            return;
+        }
+
+        close((Player)human, force);
+    }
+
     public void close(Player player) {
         close(player, false);
+    }
+
+    public void close(HumanEntity human) {
+        close(human, false);
     }
 
     public String getTitle() {
@@ -78,20 +87,23 @@ public class GuiInventory implements Listener {
         return m_title;
     }
 
-    public void addSubMenuItem(String name, Material icon, List<String> details, GuiSubInventory subInventory) {
+    public int getRowCount() {
+        return m_rowCount;
+    }
+
+    public void addSubMenuItem(String name, ItemStack icon, List<String> details, GuiSubInventory subInventory) {
 
         if (m_subMenus.containsKey(name)) {
             Bukkit.getLogger().log(Level.WARNING, "A submenu called '" + name + "' already exists in '" + m_title + "'.");
             return;
         }
 
-        ItemStack item = new ItemStack(icon);
-        ItemMeta meta = item.getItemMeta();
+        ItemMeta meta = icon.getItemMeta();
         meta.setDisplayName(name);
         meta.setLore(details);
-        item.setItemMeta(meta);
+        icon.setItemMeta(meta);
 
-        m_inventory.addItem(item);
+        m_inventory.addItem(icon);
         m_subMenus.put(name, subInventory);
 
     }

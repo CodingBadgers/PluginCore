@@ -4,10 +4,12 @@ import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.codingbadgers.plugincore.commands.CommandManager;
+import uk.codingbadgers.plugincore.gui.misc.GuiEnchantment;
 import uk.codingbadgers.plugincore.modules.ModuleLoader;
 import uk.codingbadgers.plugincore.modules.commands.ModuleCommandSystem;
 import uk.codingbadgers.plugincore.player.CorePlayerManager;
@@ -42,6 +44,7 @@ public class PluginCore extends JavaPlugin {
     @Override
     public void onEnable() {
         setupVault();
+        GuiEnchantment.Register(this);
 
         getCommand("PluginCore").setExecutor(new CommandManager(this, m_messageSystem));
 

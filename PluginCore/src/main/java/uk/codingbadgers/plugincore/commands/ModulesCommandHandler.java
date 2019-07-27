@@ -6,9 +6,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import uk.codingbadgers.plugincore.PluginCore;
+import uk.codingbadgers.plugincore.commands.gui.ModuleRestartGuiCallback;
+import uk.codingbadgers.plugincore.commands.gui.ModuleStartGuiCallback;
+import uk.codingbadgers.plugincore.commands.gui.ModuleStopGuiCallback;
 import uk.codingbadgers.plugincore.gui.GuiInventory;
 import uk.codingbadgers.plugincore.gui.GuiSubInventory;
 import uk.codingbadgers.plugincore.gui.callback.GuiReturnCallback;
+import uk.codingbadgers.plugincore.gui.misc.GuiEnchantment;
 import uk.codingbadgers.plugincore.modules.Module;
 import uk.codingbadgers.plugincore.modules.ModuleDescriptionFile;
 import uk.codingbadgers.plugincore.modules.ModuleLoader;
@@ -46,15 +50,15 @@ public class ModulesCommandHandler implements ICommandHandler {
             return;
         }
 
-        ShowModulesGui((Player)sender);
+        showModulesGui((Player)sender);
     }
 
-    private void ShowModulesGui(Player player) {
-        GuiInventory moduleInventory = CreateModulesGui();
+    public void showModulesGui(Player player) {
+        GuiInventory moduleInventory = createModulesGui();
         moduleInventory.open(player);
     }
 
-    private GuiInventory CreateModulesGui() {
+    private GuiInventory createModulesGui() {
         List<Module> modules = m_moduleLoader.getModules();
 
         GuiInventory moduleInventory = new GuiInventory(m_plugin);
@@ -64,15 +68,22 @@ public class ModulesCommandHandler implements ICommandHandler {
             ModuleDescriptionFile description = module.getDescription();
 
             GuiSubInventory moduleGui = new GuiSubInventory(m_plugin, moduleInventory, description.getName(), 1);
-            moduleGui.addMenuItem("Stop Module", new ItemStack(Material.RED_TERRACOTTA), null, 3, null);
-            moduleGui.addMenuItem("Start Module", new ItemStack(Material.LIME_TERRACOTTA), null, 4, null);
-            moduleGui.addMenuItem("Restart Module", new ItemStack(Material.YELLOW_TERRACOTTA), null, 5, null);
+            moduleGui.addMenuItem("Stop Module", new ItemStack(Material.RED_TERRACOTTA), null, 3, new ModuleStopGuiCallback(this, m_moduleLoader, module));
+            moduleGui.addMenuItem("Start Module", new ItemStack(Material.LIME_TERRACOTTA), null, 4, new ModuleStartGuiCallback(this, m_moduleLoader, module));
+            moduleGui.addMenuItem("Restart Module", new ItemStack(Material.YELLOW_TERRACOTTA), null, 5, new ModuleRestartGuiCallback(this, m_moduleLoader, module));
             moduleGui.addMenuItem("Go Back", new ItemStack(Material.NETHER_STAR), null, 8, new GuiReturnCallback(moduleInventory));
 
             List<String> details = new ArrayList<>();
             details.add("Version: " + description.getVersion());
             details.add("Description: " + description.getDescription());
-            moduleInventory.addSubMenuItem(description.getName(), Material.BLUE_WOOL, details, moduleGui);
+            details.add("Enabled: " + module.isEnabled());
+
+            ItemStack moduleIcon = new ItemStack(description.getIcon());
+            if (module.isEnabled()) {
+                moduleIcon.addEnchantment(new GuiEnchantment(), 1);
+            }
+
+            moduleInventory.addSubMenuItem(description.getName(), moduleIcon, details, moduleGui);
         }
 
         return moduleInventory;

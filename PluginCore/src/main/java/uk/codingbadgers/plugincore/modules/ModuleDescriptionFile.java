@@ -1,5 +1,6 @@
 package uk.codingbadgers.plugincore.modules;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.Reader;
@@ -14,6 +15,7 @@ public class ModuleDescriptionFile {
     private final List<String> m_authors;
     private final String m_mainClass;
     private final Collection<String> m_dependencies;
+    private final Material m_icon;
 
     public ModuleDescriptionFile(Reader data) {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(data);
@@ -24,6 +26,14 @@ public class ModuleDescriptionFile {
         m_mainClass = config.getString("main", "");
         m_authors = config.getStringList("authors");
         m_dependencies = config.getStringList("dependencies");
+
+        Material icon = Material.ENDER_EYE;
+        try {
+            icon = Material.valueOf(config.getString("icon"));
+        }catch (Exception ex) {
+            // TODO: log invalid icon name
+        }
+        m_icon = icon;
     }
 
     public String getName() {
@@ -49,4 +59,6 @@ public class ModuleDescriptionFile {
     public Collection<String> getDependencies() {
         return m_dependencies;
     }
+
+    public Material getIcon() { return m_icon; }
 }

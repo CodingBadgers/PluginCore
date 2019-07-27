@@ -103,13 +103,7 @@ public class ModuleLoader {
         m_logger.log(Level.INFO, "Enabling " + m_modules.size() + " modules");
 
         for (Module module : m_modules) {
-            try {
-                module.getLogger().log(Level.INFO, "Enabling " + module.getDescription().getName() + " v" + module.getDescription().getVersion());
-                module.setEnabled(true);
-
-                Bukkit.getServer().getPluginManager().callEvent(new ModuleEnableEvent(module));
-            } catch (Exception e) {
-                module.getLogger().log(Level.SEVERE, "Error enabling module '" + module.getDescription().getName() + "'", e);
+            if (!enableModule(module)) {
                 success = false;
             }
         }
@@ -123,18 +117,40 @@ public class ModuleLoader {
         m_logger.log(Level.INFO, "Disabling " + m_modules.size() + " modules");
 
         for (Module module : m_modules) {
-            try {
-                module.getLogger().log(Level.INFO, "Disabling " + module.getDescription().getName() + " v" + module.getDescription().getVersion());
-                module.setEnabled(false);
-
-                Bukkit.getServer().getPluginManager().callEvent(new ModuleDisableEvent(module));
-            } catch (Exception e) {
-                module.getLogger().log(Level.SEVERE, "Error disabling module '" + module.getDescription().getName() + "'", e);
+            if (!disableModule(module)) {
                 success = false;
             }
         }
 
         return success;
+    }
+
+    public boolean enableModule(Module module) {
+        try {
+            module.getLogger().log(Level.INFO, "Enabling " + module.getDescription().getName() + " v" + module.getDescription().getVersion());
+            module.setEnabled(true);
+
+            Bukkit.getServer().getPluginManager().callEvent(new ModuleEnableEvent(module));
+        } catch (Exception e) {
+            module.getLogger().log(Level.SEVERE, "Error enabling module '" + module.getDescription().getName() + "'", e);
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean disableModule(Module module) {
+        try {
+            module.getLogger().log(Level.INFO, "Disabling " + module.getDescription().getName() + " v" + module.getDescription().getVersion());
+            module.setEnabled(false);
+
+            Bukkit.getServer().getPluginManager().callEvent(new ModuleDisableEvent(module));
+        } catch (Exception e) {
+            module.getLogger().log(Level.SEVERE, "Error disabling module '" + module.getDescription().getName() + "'", e);
+            return false;
+        }
+
+        return true;
     }
 
     public void unloadModules() {
