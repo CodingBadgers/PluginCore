@@ -15,4 +15,9 @@ public class ModuleDisableEvent extends ModuleEvent {
     public HandlerList getHandlers() {
         return handlers;
     }
+
+    @SuppressWarnings("unused")
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 }
