@@ -1,17 +1,21 @@
 package uk.codingbadgers.teleportmodule.commands;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import uk.codingbadgers.plugincore.modules.Module;
 import uk.codingbadgers.plugincore.modules.commands.ModuleCommand;
+import uk.codingbadgers.teleportmodule.TeleportModule;
 
 public class SpawnCommandHandler extends ModuleCommand {
 
-    public SpawnCommandHandler(Module module) {
+    private final TeleportModule m_module;
+
+    public SpawnCommandHandler(TeleportModule module) {
         super(module, "spawn");
+        m_module = module;
     }
 
     @Override
@@ -103,7 +107,8 @@ public class SpawnCommandHandler extends ModuleCommand {
     }
 
     private void TeleportToSpawn(Player player, World world) {
-        player.teleport(world.getSpawnLocation());
+        Location spawnLocation = m_module.getSpawn(world);
+        player.teleport(spawnLocation);
         sendMessage(player, "You have been teleported to the spawn of " + world.getName());
     }
 

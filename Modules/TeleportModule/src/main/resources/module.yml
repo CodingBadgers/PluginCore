@@ -1,5 +1,6 @@
 name: ${project.artifactId}
 description: Teleportation module
 version: ${project.version}
+icon: ENDER_PEARL
 main: uk.codingbadgers.teleportmodule.TeleportModule
 authors: [ n3wton ]

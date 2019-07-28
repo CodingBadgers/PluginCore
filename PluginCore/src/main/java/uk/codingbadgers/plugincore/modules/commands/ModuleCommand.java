@@ -138,7 +138,9 @@ public abstract class ModuleCommand extends Command implements TabCompleter {
             return true;
         }
 
-        sendMessage(sender, "You do not have the required permissions '" + permission + "'");
+        if (verbose) {
+            sendMessage(sender, "You do not have the required permissions '" + permission + "'");
+        }
         return false;
     }
 }
