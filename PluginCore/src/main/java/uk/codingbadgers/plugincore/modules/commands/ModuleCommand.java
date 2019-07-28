@@ -129,4 +129,31 @@ public abstract class ModuleCommand extends Command implements TabCompleter {
 
         sender.sendMessage(message);
     }
+
+    protected boolean hasPermission(CommandSender sender, String permission) {
+        return hasPermission(sender, permission, true);
+    }
+
+    protected boolean hasPermission(CommandSender sender, String permission, boolean verbose) {
+
+        if (m_module.getPlugin().getVaultPermissions().has(sender, permission)) {
+            return true;
+        }
+
+        if (verbose) {
+            sendMessage(sender, "You do not have the required permissions '" + permission + "'");
+        }
+        return false;
+    }
+
+    protected List<String> tabCompletePlayer(String name) {
+        List<Player> players = Bukkit.matchPlayer(name);
+        ImmutableList.Builder<String> builder = ImmutableList.builder();
+
+        for (Player player : players) {
+            builder.add(player.getName());
+        }
+
+        return builder.build();
+    }
 }
