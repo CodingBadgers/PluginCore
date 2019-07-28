@@ -1,0 +1,5 @@
+name: ${project.artifactId}
+description: Teleportation module
+version: ${project.version}
+main: uk.codingbadgers.teleportmodule.TeleportModule
+authors: [ n3wton ]
