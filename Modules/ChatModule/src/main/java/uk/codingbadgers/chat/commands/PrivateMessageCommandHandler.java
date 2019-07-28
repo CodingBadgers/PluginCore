@@ -10,10 +10,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.w3c.dom.Text;
 import uk.codingbadgers.plugincore.modules.Module;
 import uk.codingbadgers.plugincore.modules.commands.ModuleCommand;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -24,7 +24,6 @@ public class PrivateMessageCommandHandler extends ModuleCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
         if (args.length < 2) {
             sendMessage(sender, ChatColor.RED + "/" + label + " <target> <message>");
             return true;
@@ -62,7 +61,7 @@ public class PrivateMessageCommandHandler extends ModuleCommand {
 
         builder.color(ChatColor.DARK_GRAY);
         builder.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/pm " + sender.getName() + " "));
-        builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("Reply to " + target.getName())));
+        builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("Reply to " + sender.getName())));
         builder.append("From [");
         builder.append(sender.getName());
         builder.append("]: ");
@@ -74,6 +73,10 @@ public class PrivateMessageCommandHandler extends ModuleCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
-        return super.onTabComplete(sender, command, label, args);
+        if (args.length == 1) {
+            return tabCompletePlayer(args[0]);
+        }
+
+        return new ArrayList<>();
     }
 }

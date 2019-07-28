@@ -83,6 +83,7 @@ public class ChatPlayerData implements CorePlayerData {
             Channel channel = m_channelManager.getDefaultChannel();
             m_activeChannel = channel;
             m_listeningChannels.add(channel);
+            channel.playerJoin(m_player);
             save(dataFile);
 
             return true;

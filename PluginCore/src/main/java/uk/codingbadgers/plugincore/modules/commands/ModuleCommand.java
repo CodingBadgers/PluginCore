@@ -1,6 +1,7 @@
 package uk.codingbadgers.plugincore.modules.commands;
 
 import com.google.common.collect.ImmutableList;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -13,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.bukkit.entity.Player;
 import uk.codingbadgers.plugincore.modules.Module;
 
 public abstract class ModuleCommand extends Command implements TabCompleter {
@@ -126,21 +128,5 @@ public abstract class ModuleCommand extends Command implements TabCompleter {
             msg);
 
         sender.sendMessage(message);
-    }
-
-    protected boolean hasPermission(CommandSender sender, String permission) {
-        return hasPermission(sender, permission, true);
-    }
-
-    protected boolean hasPermission(CommandSender sender, String permission, boolean verbose) {
-
-        if (m_module.getPlugin().getVaultPermissions().has(sender, permission)) {
-            return true;
-        }
-
-        if (verbose) {
-            sendMessage(sender, "You do not have the required permissions '" + permission + "'");
-        }
-        return false;
     }
 }
