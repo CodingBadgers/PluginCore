@@ -11,8 +11,8 @@ public class ModuleLogger extends Logger {
     private static final int c_debugValue = Level.ALL.intValue();
     private static final int c_normalValue = Level.INFO.intValue();
 
-    private Module m_module;
-    private String m_prefix;
+    private final Module m_module;
+    private final String m_prefix;
 
     ModuleLogger(PluginCore plugin, Module module) {
         super(module.getDescription().getName(), null);

@@ -7,7 +7,6 @@ import uk.codingbadgers.plugincore.utilities.MessageSystem;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 public abstract class SubCommandHandler implements ICommandHandler {

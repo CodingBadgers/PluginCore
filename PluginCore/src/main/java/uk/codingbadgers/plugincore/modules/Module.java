@@ -60,7 +60,7 @@ public abstract class Module {
             m_enabled = false;
 
             // Unregister all resources created by this module
-            m_plugin.getCommandSystem().deregisterCommands(this);
+            m_plugin.getCommandSystem().unregisterCommands(this);
 
             for (Listener listener : m_listeners) {
                 HandlerList.unregisterAll(listener);

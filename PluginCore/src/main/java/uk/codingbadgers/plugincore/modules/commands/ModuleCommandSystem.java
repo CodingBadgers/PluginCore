@@ -19,7 +19,7 @@ public class ModuleCommandSystem {
     private static final String c_commandFieldName = "knownCommands";
 
     private final PluginCore m_plugin;
-    private Map<Module, List<ModuleCommand>> m_commands = new HashMap<>();
+    private final Map<Module, List<ModuleCommand>> m_commands = new HashMap<>();
     private CommandMap m_commandMap;
     private Field m_knownCommandsField;
 
@@ -64,7 +64,7 @@ public class ModuleCommandSystem {
     }
 
     @SuppressWarnings("unchecked")
-    public void deregisterCommands(Module module) {
+    public void unregisterCommands(Module module) {
         if (!m_commands.containsKey(module)) {
             return;
         }
@@ -84,7 +84,7 @@ public class ModuleCommandSystem {
                 command.unregister(m_commandMap);
                 knownCommands.remove(command.getLabel().toLowerCase());
             } catch (Exception e) {
-                m_plugin.getLogger().log(Level.SEVERE, "Error deregistering commands for module '" + module.getDescription().getName() + "'", e);
+                m_plugin.getLogger().log(Level.SEVERE, "Error un-registering commands for module '" + module.getDescription().getName() + "'", e);
             }
         }
 

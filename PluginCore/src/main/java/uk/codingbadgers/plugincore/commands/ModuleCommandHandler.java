@@ -2,7 +2,6 @@ package uk.codingbadgers.plugincore.commands;
 
 import uk.codingbadgers.plugincore.PluginCore;
 import uk.codingbadgers.plugincore.commands.module.ModuleControlCommandHandler;
-import uk.codingbadgers.plugincore.modules.Module;
 import uk.codingbadgers.plugincore.modules.ModuleLoader;
 
 import java.io.File;

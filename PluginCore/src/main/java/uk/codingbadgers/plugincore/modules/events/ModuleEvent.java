@@ -5,7 +5,7 @@ import uk.codingbadgers.plugincore.modules.Module;
 
 public abstract class ModuleEvent extends Event {
 
-    private Module m_module;
+    private final Module m_module;
 
     public ModuleEvent(Module module) {
         m_module = module;

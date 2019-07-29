@@ -18,7 +18,7 @@ public class CorePlayerManager implements Listener {
 
     private final PluginCore m_plugin;
     private final File m_dataFolder;
-    private Map<UUID, CorePlayer> m_players = new HashMap<>();
+    private final Map<UUID, CorePlayer> m_players = new HashMap<>();
 
     public CorePlayerManager(PluginCore plugin) {
         m_plugin = plugin;

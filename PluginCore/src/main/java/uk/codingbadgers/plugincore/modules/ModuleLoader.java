@@ -29,8 +29,8 @@ public class ModuleLoader {
     private final PluginManager m_pluginManager;
     private final File m_modulesDir;
 
-    private Map<File, Module> m_loadedModuleFiles = new TreeMap<>();
-    private Map<Module, ModuleClassLoader> m_loaders = new HashMap<>();
+    private final Map<File, Module> m_loadedModuleFiles = new TreeMap<>();
+    private final Map<Module, ModuleClassLoader> m_loaders = new HashMap<>();
 
     public ModuleLoader(PluginCore plugin, String path) {
         m_plugin = plugin;
@@ -169,10 +169,8 @@ public class ModuleLoader {
     }
 
     private Module load(File file) {
-        JarFile jar = null;
-
         try {
-            jar = new JarFile(file);
+            JarFile jar = new JarFile(file);
             ModuleDescriptionFile mdf = loadDescription(jar);
 
             if (mdf == null) {
@@ -245,7 +243,9 @@ public class ModuleLoader {
             try {
                 clazz = loader.findClass(name);
                 return clazz;
-            } catch (ClassNotFoundException e) {}
+            } catch (ClassNotFoundException e) {
+                // ignored
+            }
         }
 
         throw new ClassNotFoundException(name);
