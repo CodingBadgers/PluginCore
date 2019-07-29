@@ -15,10 +15,7 @@ import java.io.Reader;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
@@ -35,7 +32,7 @@ public class ModuleLoader {
     private File[] m_files;
     private Set<File> m_moduleFiles = new HashSet<>();
     private List<Module> m_modules = new ArrayList<>();
-    private ModuleClassLoader m_loader;
+    private Map<Module, ModuleClassLoader> m_loaders = new HashMap<>();
 
     public ModuleLoader(PluginCore plugin, String path) {
         m_plugin = plugin;
@@ -43,7 +40,6 @@ public class ModuleLoader {
         m_modulesDir = new File(path);
 
         findModules();
-        generateClassLoader();
     }
 
     public List<Module> getModules() {
@@ -58,28 +54,6 @@ public class ModuleLoader {
         m_files = m_modulesDir.listFiles(c_jarFilter);
 
         m_logger.log(Level.INFO, "Found " + m_files.length + " modules");
-    }
-
-    private void generateClassLoader() {
-        if (m_loader != null) {
-            try {
-                m_loader.close();
-            } catch (IOException e) {
-                m_logger.log(Level.SEVERE, "Failed to close old module class loader", e);
-            }
-        }
-
-        List<URL> urls = new ArrayList<>();
-
-        for (File file : m_files) {
-            try {
-                urls.add(file.toURI().toURL());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        m_loader = new ModuleClassLoader(urls.toArray(new URL[0]), m_plugin.getClass().getClassLoader());
     }
 
     public boolean loadModules() {
@@ -160,9 +134,9 @@ public class ModuleLoader {
     public void unloadModules() {
         m_moduleFiles.clear();
         m_modules.clear();
+        m_loaders.clear();
 
         findModules();
-        generateClassLoader();
     }
 
     public Module loadModule(String file) {
@@ -176,7 +150,6 @@ public class ModuleLoader {
         }
 
         try {
-            m_loader.addURL(file.toURI().toURL());
             return load(file);
         } catch (Exception e) {
             m_logger.log(Level.SEVERE, "Failed to load module '" + file.getPath() + "'");
@@ -188,6 +161,7 @@ public class ModuleLoader {
     public void unloadModule(Module module) {
         m_modules.remove(module);
         m_moduleFiles.remove(module.getFile());
+        m_loaders.remove(module);
     }
 
     private ModuleDescriptionFile loadDescription(JarFile file) throws IOException {
@@ -213,8 +187,10 @@ public class ModuleLoader {
                 return null;
             }
 
+            ModuleClassLoader loader = new ModuleClassLoader(this, file.toURI().toURL(), getClass().getClassLoader());
+
             String mainClass = mdf.getMainClass();
-            Class<?> clazz = Class.forName(mainClass, true, m_loader);
+            Class<?> clazz = Class.forName(mainClass, true, loader);
 
             if (clazz == null) {
                 return null;
@@ -228,6 +204,7 @@ public class ModuleLoader {
 
             m_moduleFiles.add(file);
             m_modules.add(module);
+            m_loaders.put(module, loader);
             module.onLoad();
 
             Bukkit.getServer().getPluginManager().callEvent(new ModuleLoadEvent(module));
@@ -249,5 +226,17 @@ public class ModuleLoader {
         }
 
         return null;
+    }
+
+    public Class<?> findClass(String name) throws ClassNotFoundException{
+        Class<?> clazz;
+        for (ModuleClassLoader loader : m_loaders.values()) {
+            try {
+                clazz = loader.findClass(name);
+                return clazz;
+            } catch (ClassNotFoundException e) {}
+        }
+
+        throw new ClassNotFoundException(name);
     }
 }
