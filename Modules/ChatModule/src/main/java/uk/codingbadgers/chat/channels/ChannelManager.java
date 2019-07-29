@@ -41,7 +41,7 @@ public class ChannelManager {
          * If no channels are loaded, add a default channel so there always exists at least one.
          */
         if (m_channels.size() == 0) {
-            addChannel(new Channel("default"));
+            addChannel(new Channel("default", true));
             m_module.getLogger().log(Level.INFO, "Added default channel \"default\"");
         }
     }

@@ -55,5 +55,4 @@ public class PlayerListener implements Listener {
             channel.playerLeave(player);
         }
     }
-
 }

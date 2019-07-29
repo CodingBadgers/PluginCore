@@ -53,6 +53,10 @@ public class ChatPlayerData implements CorePlayerData {
 
     public void leaveChannel(Channel channel) {
         m_listeningChannels.remove(channel);
+
+        if (m_activeChannel == channel) {
+            m_activeChannel = m_listeningChannels.size() == 0 ? null : m_listeningChannels.get(0);
+        }
     }
 
     @Override

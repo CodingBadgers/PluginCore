@@ -54,9 +54,12 @@ public class Channel {
             new MessagePart(MessagePartType.TEXT, ": ", ChatColor.WHITE),
             new MessagePart(MessagePartType.MESSAGE, "", ChatColor.WHITE)
     ));
+    @SerializedName("required")
+    private boolean m_required;
 
-    public Channel(String name) {
+    public Channel(String name, boolean required) {
         m_name = name;
+        m_required = required;
     }
 
     public void setupChannel() {
@@ -158,5 +161,9 @@ public class Channel {
 
     public int getActivePlayerCount() {
         return m_currentPlayers.size();
+    }
+
+    public boolean isRequired() {
+        return m_required;
     }
 }
