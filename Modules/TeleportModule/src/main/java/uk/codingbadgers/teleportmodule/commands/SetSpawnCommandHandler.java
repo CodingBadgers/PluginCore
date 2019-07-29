@@ -1,5 +1,6 @@
 package uk.codingbadgers.teleportmodule.commands;
 
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,7 +28,11 @@ public class SetSpawnCommandHandler extends ModuleCommand {
             return true;
         }
 
-        m_module.setSpawn(((Player)sender).getLocation());
+        Location currentLocation = ((Player)sender).getLocation();
+        m_module.setSpawn(currentLocation);
+
+        String worldName = currentLocation.getWorld().getName();
+        sendMessage(sender, "The spawn of world '" + worldName + "' has been updated to your current location.");
         return true;
     }
 }
