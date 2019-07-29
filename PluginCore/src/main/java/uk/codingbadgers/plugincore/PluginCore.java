@@ -4,7 +4,6 @@ import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -38,7 +37,7 @@ public class PluginCore extends JavaPlugin {
         m_commandSystem = new ModuleCommandSystem(this);
         m_playerManager = new CorePlayerManager(this);
 
-        m_moduleLoader.loadModules();
+        m_moduleLoader.loadAllModules();
     }
 
     @Override
@@ -50,7 +49,7 @@ public class PluginCore extends JavaPlugin {
 
         Bukkit.getServer().getPluginManager().registerEvents(m_playerManager, this);
 
-        m_moduleLoader.enableModules();
+        m_moduleLoader.enableAllModules();
 
         // Done
         getLogger().log(Level.INFO, "Enabled " + getDescription().getName() + " version: " + getDescription().getVersion() );
@@ -58,7 +57,7 @@ public class PluginCore extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        m_moduleLoader.disableModules();
+        m_moduleLoader.disableAllModules();
 
         getLogger().log(Level.INFO, "Disabled " + getDescription().getName());
     }

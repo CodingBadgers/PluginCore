@@ -2,6 +2,7 @@ package uk.codingbadgers.plugincore.modules;
 
 import com.google.common.collect.ImmutableList;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
 import uk.codingbadgers.plugincore.PluginCore;
 import uk.codingbadgers.plugincore.modules.events.ModuleDisableEvent;
 import uk.codingbadgers.plugincore.modules.events.ModuleEnableEvent;
@@ -13,8 +14,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Constructor;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -26,43 +25,53 @@ public class ModuleLoader {
     private static final FileExtensionFilter c_jarFilter = new FileExtensionFilter("jar");
 
     private final Logger m_logger;
-    private PluginCore m_plugin;
-    private File m_modulesDir;
+    private final PluginCore m_plugin;
+    private final PluginManager m_pluginManager;
+    private final File m_modulesDir;
 
-    private File[] m_files;
-    private Set<File> m_moduleFiles = new HashSet<>();
-    private List<Module> m_modules = new ArrayList<>();
+    private Map<File, Module> m_loadedModuleFiles = new TreeMap<>();
     private Map<Module, ModuleClassLoader> m_loaders = new HashMap<>();
 
     public ModuleLoader(PluginCore plugin, String path) {
         m_plugin = plugin;
         m_logger = m_plugin.getLogger();
+        m_pluginManager = plugin.getServer().getPluginManager();
         m_modulesDir = new File(path);
-
-        findModules();
     }
 
-    public List<Module> getModules() {
-        return ImmutableList.copyOf(m_modules);
+    public List<Module> getLoadedModules() {
+        return ImmutableList.copyOf(m_loadedModuleFiles.values());
     }
 
-    private void findModules() {
+    public boolean isModuleFileLoaded(File file) {
+        return m_loadedModuleFiles.containsKey(file);
+    }
+
+    public File[] findAllModuleFiles() {
         if (!m_modulesDir.exists()) {
-            m_modulesDir.mkdirs();
+            if (!m_modulesDir.mkdirs()) {
+                m_logger.log(Level.SEVERE,"Failed to create the directory '" + m_modulesDir + "'");
+            }
         }
 
-        m_files = m_modulesDir.listFiles(c_jarFilter);
+        File[] files = m_modulesDir.listFiles(c_jarFilter);
+        if (files == null) {
+            m_logger.log(Level.INFO, "File to list files within the directory '" + m_modulesDir + "'");
+            return new File[0];
+        }
 
-        m_logger.log(Level.INFO, "Found " + m_files.length + " modules");
+        m_logger.log(Level.INFO, "Found " + files.length + " modules");
+        return files;
     }
 
-    public boolean loadModules() {
+    public boolean loadAllModules() {
         boolean success = true;
 
-        m_logger.log(Level.INFO, "Loading " + m_files.length+ " modules");
+        File[] files = findAllModuleFiles();
+        m_logger.log(Level.INFO, "Loading " + files.length+ " modules");
 
-        for (File file : m_files) {
-            if (load(file) == null) {
+        for (File file : files) {
+            if (loadModule(file) == null) {
                 m_logger.log(Level.SEVERE, "Failed to load module '" + file.getPath() + "'");
                 success = false;
             }
@@ -71,12 +80,19 @@ public class ModuleLoader {
         return success;
     }
 
-    public boolean enableModules() {
+    public void unloadAllModules() {
+        for (Module module : getLoadedModules()) {
+            unloadModule(module);
+        }
+    }
+
+    public boolean enableAllModules() {
         boolean success = true;
 
-        m_logger.log(Level.INFO, "Enabling " + m_modules.size() + " modules");
+        List<Module> loadedModules = getLoadedModules();
+        m_logger.log(Level.INFO, "Enabling " + loadedModules.size() + " modules");
 
-        for (Module module : m_modules) {
+        for (Module module : loadedModules) {
             if (!enableModule(module)) {
                 success = false;
             }
@@ -85,12 +101,13 @@ public class ModuleLoader {
         return success;
     }
 
-    public boolean disableModules() {
+    public boolean disableAllModules() {
         boolean success = true;
 
-        m_logger.log(Level.INFO, "Disabling " + m_modules.size() + " modules");
+        List<Module> loadedModules = getLoadedModules();
+        m_logger.log(Level.INFO, "Disabling " + loadedModules.size() + " modules");
 
-        for (Module module : m_modules) {
+        for (Module module : loadedModules) {
             if (!disableModule(module)) {
                 success = false;
             }
@@ -101,12 +118,11 @@ public class ModuleLoader {
 
     public boolean enableModule(Module module) {
         try {
-            module.getLogger().log(Level.INFO, "Enabling " + module.getDescription().getName() + " v" + module.getDescription().getVersion());
+            module.getLogger().log(Level.INFO, "Enabling " + module.getName() + " v" + module.getVersion());
             module.setEnabled(true);
-
-            Bukkit.getServer().getPluginManager().callEvent(new ModuleEnableEvent(module));
+            m_pluginManager.callEvent(new ModuleEnableEvent(module));
         } catch (Exception e) {
-            module.getLogger().log(Level.SEVERE, "Error enabling module '" + module.getDescription().getName() + "'", e);
+            module.getLogger().log(Level.SEVERE, "Error enabling module '" + module.getName() + "'", e);
             return false;
         }
 
@@ -119,32 +135,19 @@ public class ModuleLoader {
         }
 
         try {
-            module.getLogger().log(Level.INFO, "Disabling " + module.getDescription().getName() + " v" + module.getDescription().getVersion());
+            module.getLogger().log(Level.INFO, "Disabling " + module.getName() + " v" + module.getVersion());
             module.setEnabled(false);
-
-            Bukkit.getServer().getPluginManager().callEvent(new ModuleDisableEvent(module));
+            m_pluginManager.callEvent(new ModuleDisableEvent(module));
         } catch (Exception e) {
-            module.getLogger().log(Level.SEVERE, "Error disabling module '" + module.getDescription().getName() + "'", e);
+            module.getLogger().log(Level.SEVERE, "Error disabling module '" + module.getName() + "'", e);
             return false;
         }
 
         return true;
     }
 
-    public void unloadModules() {
-        m_moduleFiles.clear();
-        m_modules.clear();
-        m_loaders.clear();
-
-        findModules();
-    }
-
-    public Module loadModule(String file) {
-        return loadModule(new File(m_modulesDir, file));
-    }
-
     public Module loadModule(File file) {
-        if (m_moduleFiles.contains(file)) {
+        if (m_loadedModuleFiles.containsKey(file)) {
             m_plugin.getLogger().log(Level.SEVERE, "Attempting to load already loaded module '" + file.getName() + "'");
             return null;
         }
@@ -159,21 +162,10 @@ public class ModuleLoader {
     }
 
     public void unloadModule(Module module) {
-        m_modules.remove(module);
-        m_moduleFiles.remove(module.getFile());
+        String moduleName = module.getName();
+        m_loadedModuleFiles.remove(module.getFile());
         m_loaders.remove(module);
-    }
-
-    private ModuleDescriptionFile loadDescription(JarFile file) throws IOException {
-        JarEntry moduleDesc = file.getJarEntry("module.yml");
-
-        if (moduleDesc == null) {
-            return null;
-        }
-
-        try (Reader reader = new InputStreamReader(file.getInputStream(moduleDesc))) {
-            return new ModuleDescriptionFile(reader);
-        }
+        m_logger.log(Level.INFO, "Unloaded the module '" + moduleName + "'");
     }
 
     private Module load(File file) {
@@ -202,8 +194,7 @@ public class ModuleLoader {
 
             module.init(m_plugin, file, jar, mdf, new File(m_modulesDir, mdf.getName()));
 
-            m_moduleFiles.add(file);
-            m_modules.add(module);
+            m_loadedModuleFiles.put(file, module);
             m_loaders.put(module, loader);
             module.onLoad();
 
@@ -218,8 +209,28 @@ public class ModuleLoader {
         return null;
     }
 
+    private ModuleDescriptionFile loadDescription(JarFile file) throws IOException {
+        JarEntry moduleDesc = file.getJarEntry("module.yml");
+
+        if (moduleDesc == null) {
+            return null;
+        }
+
+        try (Reader reader = new InputStreamReader(file.getInputStream(moduleDesc))) {
+            return new ModuleDescriptionFile(reader);
+        }
+    }
+
+    public Module getModule(File file) {
+        if (!isModuleFileLoaded(file)) {
+            return null;
+        }
+
+        return m_loadedModuleFiles.get(file);
+    }
+
     public Module getModule(String name) {
-        for (Module m: m_modules) {
+        for (Module m : getLoadedModules()) {
             if (m.getDescription().getName().equalsIgnoreCase(name)) {
                 return m;
             }

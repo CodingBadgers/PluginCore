@@ -21,7 +21,7 @@ public class EnableModulesCommandHandler implements ICommandHandler {
 
     @Override
     public void handle(MessageSystem messageSystem, CommandSender sender, Command command, String label, String[] args) {
-        m_moduleLoader.enableModules();
+        m_moduleLoader.enableAllModules();
         messageSystem.SendMessage(sender, "All modules have been enabled.");
     }
 }

@@ -13,12 +13,10 @@ public class ReloadModuleCommandHandler implements ICommandHandler {
 
     private final ModuleLoader m_moduleLoader;
     private final File m_moduleFile;
-    private final String m_moduleName;
 
-    ReloadModuleCommandHandler(ModuleLoader moduleLoader, Module module) {
+    ReloadModuleCommandHandler(ModuleLoader moduleLoader, File moduleFile) {
         m_moduleLoader = moduleLoader;
-        m_moduleFile = module.getFile();
-        m_moduleName = module.getName();
+        m_moduleFile = moduleFile;
     }
 
     @Override
@@ -29,7 +27,7 @@ public class ReloadModuleCommandHandler implements ICommandHandler {
     @Override
     public void handle(MessageSystem messageSystem, CommandSender sender, Command command, String label, String[] args) {
 
-        Module module = m_moduleLoader.getModule(m_moduleName);
+        Module module = m_moduleLoader.getModule(m_moduleFile);
         if (module != null) {
             module.setEnabled(false);
             m_moduleLoader.unloadModule(module);
@@ -37,6 +35,6 @@ public class ReloadModuleCommandHandler implements ICommandHandler {
 
         module = m_moduleLoader.loadModule(m_moduleFile);
         module.setEnabled(true);
-        messageSystem.SendMessage(sender, "Reloaded " + m_moduleName);
+        messageSystem.SendMessage(sender, "Reloaded " + module.getName());
     }
 }

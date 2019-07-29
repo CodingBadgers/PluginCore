@@ -10,13 +10,13 @@ import uk.codingbadgers.plugincore.modules.ModuleLoader;
 
 import java.io.File;
 
-public class ModuleReloadGuiCallback implements GuiCallback {
+public class ModuleUnloadGuiCallback implements GuiCallback {
 
     private final File m_moduleFile;
     private final ModuleLoader m_moduleLoader;
     private final ModulesCommandHandler m_modulesCommandHandler;
 
-    public ModuleReloadGuiCallback(ModulesCommandHandler modulesCommandHandler, ModuleLoader moduleLoader, File moduleFile) {
+    public ModuleUnloadGuiCallback(ModulesCommandHandler modulesCommandHandler, ModuleLoader moduleLoader, File moduleFile) {
         m_moduleFile = moduleFile;
         m_moduleLoader = moduleLoader;
         m_modulesCommandHandler = modulesCommandHandler;
@@ -25,15 +25,12 @@ public class ModuleReloadGuiCallback implements GuiCallback {
     @Override
     public void onClick(GuiInventory inventory, InventoryClickEvent clickEvent) {
         Module module = m_moduleLoader.getModule(m_moduleFile);
-
-        if (module != null) {
-            m_moduleLoader.disableModule(module);
-            m_moduleLoader.unloadModule(module);
+        if (module == null) {
+            return; // Module isn't loaded
         }
 
-        module = m_moduleLoader.loadModule(m_moduleFile);
-        m_moduleLoader.enableModule(module);
-
+        m_moduleLoader.disableModule(module);
+        m_moduleLoader.unloadModule(module);
         m_modulesCommandHandler.showModulesGui((Player)clickEvent.getWhoClicked());
     }
 }

@@ -13,12 +13,10 @@ public class LoadModuleCommandHandler implements ICommandHandler {
 
     private final ModuleLoader m_moduleLoader;
     private final File m_moduleFile;
-    private final String m_moduleName;
 
-    LoadModuleCommandHandler(ModuleLoader moduleLoader, Module module) {
+    LoadModuleCommandHandler(ModuleLoader moduleLoader, File moduleFile) {
         m_moduleLoader = moduleLoader;
-        m_moduleFile = module.getFile();
-        m_moduleName = module.getName();
+        m_moduleFile = moduleFile;
     }
 
     @Override
@@ -28,15 +26,15 @@ public class LoadModuleCommandHandler implements ICommandHandler {
 
     @Override
     public void handle(MessageSystem messageSystem, CommandSender sender, Command command, String label, String[] args) {
-        Module module = m_moduleLoader.getModule(m_moduleName);
+        Module module = m_moduleLoader.getModule(m_moduleFile);
         if (module != null) {
-            messageSystem.SendMessage(sender, "Module " + m_moduleName + " is already loaded.");
+            messageSystem.SendMessage(sender, "Module " + module.getName() + " is already loaded.");
             return;
         }
 
         module = m_moduleLoader.loadModule(m_moduleFile);
         module.setEnabled(true);
 
-        messageSystem.SendMessage(sender, "Module " + m_moduleName + " has been loaded.");
+        messageSystem.SendMessage(sender, "Module " + module.getName() + " has been loaded.");
     }
 }

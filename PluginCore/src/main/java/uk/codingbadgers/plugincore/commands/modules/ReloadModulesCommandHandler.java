@@ -21,10 +21,10 @@ public class ReloadModulesCommandHandler implements ICommandHandler {
 
     @Override
     public void handle(MessageSystem messageSystem, CommandSender sender, Command command, String label, String[] args) {
-        m_moduleLoader.disableModules();
-        m_moduleLoader.unloadModules();
-        m_moduleLoader.loadModules();
-        m_moduleLoader.enableModules();
+        m_moduleLoader.disableAllModules();
+        m_moduleLoader.unloadAllModules();
+        m_moduleLoader.loadAllModules();
+        m_moduleLoader.enableAllModules();
         messageSystem.SendMessage(sender, "All modules have been reloaded.");
     }
 }

@@ -80,9 +80,9 @@ public abstract class Module {
         return m_debug;
     }
 
-    public String getName() {
-        return getDescription().getName();
-    }
+    public String getName() { return getDescription().getName(); }
+
+    public String getVersion() { return getDescription().getVersion(); }
 
     public ModuleDescriptionFile getDescription() {
         return m_mdf;

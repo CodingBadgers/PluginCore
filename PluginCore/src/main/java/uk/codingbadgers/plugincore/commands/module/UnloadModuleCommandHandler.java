@@ -12,11 +12,11 @@ import java.io.File;
 public class UnloadModuleCommandHandler implements ICommandHandler {
 
     private final ModuleLoader m_moduleLoader;
-    private final String m_moduleName;
+    private final File m_moduleFile;
 
-    UnloadModuleCommandHandler(ModuleLoader moduleLoader, String moduleName) {
+    UnloadModuleCommandHandler(ModuleLoader moduleLoader, File moduleFile) {
         m_moduleLoader = moduleLoader;
-        m_moduleName = moduleName;
+        m_moduleFile = moduleFile;
     }
 
     @Override
@@ -26,14 +26,16 @@ public class UnloadModuleCommandHandler implements ICommandHandler {
 
     @Override
     public void handle(MessageSystem messageSystem, CommandSender sender, Command command, String label, String[] args) {
-        Module module = m_moduleLoader.getModule(m_moduleName);
+        Module module = m_moduleLoader.getModule(m_moduleFile);
         if (module == null) {
-            messageSystem.SendMessage(sender, "Module " + m_moduleName + " is already unloaded.");
+            messageSystem.SendMessage(sender, "Module " + m_moduleFile.getName() + " is already unloaded.");
             return;
         }
 
+        String moduleName = module.getName();
         module.setEnabled(false);
         m_moduleLoader.unloadModule(module);
-        messageSystem.SendMessage(sender, "Module " + m_moduleName + " has been unloaded.");
+
+        messageSystem.SendMessage(sender, "Module " + moduleName + " has been unloaded.");
     }
 }

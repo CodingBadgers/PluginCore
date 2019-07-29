@@ -6,9 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import uk.codingbadgers.plugincore.PluginCore;
-import uk.codingbadgers.plugincore.commands.gui.ModuleReloadGuiCallback;
-import uk.codingbadgers.plugincore.commands.gui.ModuleEnableGuiCallback;
-import uk.codingbadgers.plugincore.commands.gui.ModuleDisableGuiCallback;
+import uk.codingbadgers.plugincore.commands.gui.*;
 import uk.codingbadgers.plugincore.commands.modules.EnableModulesCommandHandler;
 import uk.codingbadgers.plugincore.commands.modules.ReloadModulesCommandHandler;
 import uk.codingbadgers.plugincore.commands.modules.DisableModulesCommandHandler;
@@ -21,6 +19,7 @@ import uk.codingbadgers.plugincore.modules.ModuleDescriptionFile;
 import uk.codingbadgers.plugincore.modules.ModuleLoader;
 import uk.codingbadgers.plugincore.utilities.MessageSystem;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +34,9 @@ public class ModulesCommandHandler extends SubCommandHandler {
         m_plugin = plugin;
         m_moduleLoader = plugin.getModuleLoader();
 
-        registerSubCommand("reload", new ReloadModulesCommandHandler(m_moduleLoader));
-        registerSubCommand("disable", new DisableModulesCommandHandler(m_moduleLoader));
-        registerSubCommand("enable", new EnableModulesCommandHandler(m_moduleLoader));
+        registerSubCommand("reload_all", new ReloadModulesCommandHandler(m_moduleLoader));
+        registerSubCommand("disable_all", new DisableModulesCommandHandler(m_moduleLoader));
+        registerSubCommand("enable_all", new EnableModulesCommandHandler(m_moduleLoader));
     }
 
     @Override
@@ -68,34 +67,60 @@ public class ModulesCommandHandler extends SubCommandHandler {
     }
 
     private GuiInventory createModulesGui() {
-        List<Module> modules = m_moduleLoader.getModules();
+        File[] moduleFiles = m_moduleLoader.findAllModuleFiles();
 
         GuiInventory moduleInventory = new GuiInventory(m_plugin);
-        moduleInventory.createInventory("Module Manager", (modules.size() / 9) + 1);
+        moduleInventory.createInventory("Module Manager", (moduleFiles.length / 9) + 1);
 
-        for (Module module : m_moduleLoader.getModules()) {
-            ModuleDescriptionFile description = module.getDescription();
+        for (File moduleFile : moduleFiles) {
 
-            GuiSubInventory moduleGui = new GuiSubInventory(m_plugin, moduleInventory, description.getName(), 1);
-            moduleGui.addMenuItem("Disable Module", new ItemStack(Material.RED_TERRACOTTA), null, 3, new ModuleDisableGuiCallback(this, m_moduleLoader, module));
-            moduleGui.addMenuItem("Enable Module", new ItemStack(Material.LIME_TERRACOTTA), null, 4, new ModuleEnableGuiCallback(this, m_moduleLoader, module));
-            moduleGui.addMenuItem("Reload Module", new ItemStack(Material.YELLOW_TERRACOTTA), null, 5, new ModuleReloadGuiCallback(this, m_moduleLoader, module));
+            boolean isModuleLoaded = m_moduleLoader.isModuleFileLoaded(moduleFile);
+            boolean isModuleEnable = false;
+            String moduleName = moduleFile.getName();
+            String moduleVersion = "<unknown>";
+            String moduleDescription = "<unknown>";
+            Material moduleIconMaterial = Material.BEDROCK;
+
+            if (isModuleLoaded) {
+                Module loadedModule = m_moduleLoader.getModule(moduleFile);
+                isModuleEnable = loadedModule.isEnabled();
+                moduleName = loadedModule.getName();
+                moduleVersion = loadedModule.getVersion();
+
+                ModuleDescriptionFile description = loadedModule.getDescription();
+                moduleDescription = description.getDescription();
+                moduleIconMaterial = description.getIcon();
+            }
+
+            GuiSubInventory moduleGui = new GuiSubInventory(m_plugin, moduleInventory, moduleName, 1);
+            moduleGui.addMenuItem("Disable Module", GetIcon(Material.RED_TERRACOTTA, isModuleLoaded && isModuleEnable), null, 2, new ModuleDisableGuiCallback(this, m_moduleLoader, moduleFile));
+            moduleGui.addMenuItem("Enable Module", GetIcon(Material.LIME_TERRACOTTA, isModuleLoaded && !isModuleEnable), null, 3, new ModuleEnableGuiCallback(this, m_moduleLoader, moduleFile));
+            moduleGui.addMenuItem("Unload Module", GetIcon(Material.BLACK_TERRACOTTA, isModuleLoaded), null, 4, new ModuleUnloadGuiCallback(this, m_moduleLoader, moduleFile));
+            moduleGui.addMenuItem("Load Module", GetIcon(Material.WHITE_TERRACOTTA, !isModuleLoaded), null, 5, new ModuleLoadGuiCallback(this, m_moduleLoader, moduleFile));
+            moduleGui.addMenuItem("Reload Module", GetIcon(Material.YELLOW_TERRACOTTA, isModuleLoaded), null, 6, new ModuleReloadGuiCallback(this, m_moduleLoader, moduleFile));
             moduleGui.addMenuItem("Go Back", new ItemStack(Material.NETHER_STAR), null, 8, new GuiReturnCallback(moduleInventory));
 
             List<String> details = new ArrayList<>();
-            details.add("Version: " + description.getVersion());
-            details.add("Description: " + description.getDescription());
-            details.add("Enabled: " + module.isEnabled());
+            details.add("Version: " + moduleVersion);
+            details.add("Description: " + moduleDescription);
+            details.add("Enabled: " + isModuleEnable);
 
-            ItemStack moduleIcon = new ItemStack(description.getIcon());
-            if (module.isEnabled()) {
+            ItemStack moduleIcon = new ItemStack(moduleIconMaterial);
+            if (isModuleEnable) {
                 moduleIcon.addEnchantment(new GuiEnchantment(), 1);
             }
 
-            moduleInventory.addSubMenuItem(description.getName(), moduleIcon, details, moduleGui);
+            moduleInventory.addSubMenuItem(moduleName, moduleIcon, details, moduleGui);
         }
 
         return moduleInventory;
+    }
+
+    private ItemStack GetIcon(Material activeMaterial, boolean isActive) {
+        if (isActive) {
+            return new ItemStack(activeMaterial);
+        }
+        return new ItemStack(Material.BARRIER);
     }
 
 }
