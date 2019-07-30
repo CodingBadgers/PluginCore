@@ -97,6 +97,10 @@ public class Channel {
     public void sendMessage(ChatModule module, CorePlayer player, String msg) {
         Chat chat = module.getPlugin().getVaultChat();
 
+        if (!player.hasPermission("chat.channel." + m_name.toLowerCase() + ".speak")) {
+            return;
+        }
+
         module.getLogger().log(Level.INFO, "[{0}->{1}] {2}", new String[] { player.getName(), m_name, msg });
 
         // Build message

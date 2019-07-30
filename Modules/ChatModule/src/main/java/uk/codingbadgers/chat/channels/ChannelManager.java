@@ -1,6 +1,7 @@
 package uk.codingbadgers.chat.channels;
 
 import uk.codingbadgers.chat.ChatModule;
+import uk.codingbadgers.chat.commands.QuickMessageCommandHandler;
 import uk.codingbadgers.plugincore.utilities.FileExtensionFilter;
 
 import java.io.File;
@@ -58,6 +59,8 @@ public class ChannelManager {
         channel.setupChannel();
         saveChannel(channel);
         m_channels.put(channel.getName(), channel);
+
+        m_module.registerCommand(new QuickMessageCommandHandler(m_module, channel));
         return true;
     }
 

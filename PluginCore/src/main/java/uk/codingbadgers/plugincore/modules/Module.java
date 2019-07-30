@@ -100,7 +100,7 @@ public abstract class Module {
         return m_dataFolder;
     }
 
-    protected void registerCommand(ModuleCommand command) {
+    public void registerCommand(ModuleCommand command) {
         m_logger.log(Level.FINE, "Registered command '" + command.getName() + "'");
         m_plugin.getCommandSystem().registerCommand(this, command);
     }

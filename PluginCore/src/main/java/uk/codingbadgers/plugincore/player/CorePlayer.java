@@ -87,4 +87,20 @@ public class CorePlayer {
     public <T extends CorePlayerData> T getPlayerData(Class<T> clazz) {
         return (T) m_playerData.get(clazz);
     }
+
+    public boolean hasPermission(String permission) {
+        return hasPermission(permission, true);
+    }
+
+    public boolean hasPermission(String permission, boolean verbose) {
+        if (m_plugin.getVaultPermissions().has(m_player, permission)) {
+            return true;
+        }
+
+        if (verbose) {
+            sendMessage("You do not have the required permissions '" + permission + "'");
+        }
+
+        return false;
+    }
 }

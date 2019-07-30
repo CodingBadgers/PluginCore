@@ -15,12 +15,12 @@ import uk.codingbadgers.plugincore.player.CorePlayerManager;
 
 import java.util.List;
 
-public class JoinCommandHandler extends ModuleChildCommand {
+public class FocusCommandHandler extends ModuleChildCommand {
     private final ChannelManager m_channelManager;
     private final CorePlayerManager m_playerManager;
 
-    public JoinCommandHandler(ChatModule module) {
-        super(module, "join");
+    public FocusCommandHandler(ChatModule module) {
+        super(module, "focus");
 
         m_channelManager = module.getChannelManager();
         m_playerManager = module.getPlugin().getPlayerManager();
@@ -48,18 +48,17 @@ public class JoinCommandHandler extends ModuleChildCommand {
             return true;
         }
 
-        if (!hasPermission(sender, "chat.channel." + channel.getName().toLowerCase() + ".listen")) {
+        if (!hasPermission(sender, "chat.channel." + channel.getName().toLowerCase() + ".speak")) {
             return true;
         }
 
-        if (data.getChannels().contains(channel)) {
-            sendMessage(sender, "You are already part of the channel \"" + channelName + "\"");
+        if (!data.getChannels().contains(channel)) {
+            sendMessage(sender, "You are not part of the channel \"" + channelName + "\"");
             return true;
         }
 
-        data.joinChannel(channel);
-        channel.playerJoin(player);
-        sendMessage(sender, "You have joined the channel \"" + channelName + "\"");
+        data.setActiveChannel(channel);
+        sendMessage(sender, "Your active channel has been set to \"" + channelName + "\"");
 
         return true;
     }

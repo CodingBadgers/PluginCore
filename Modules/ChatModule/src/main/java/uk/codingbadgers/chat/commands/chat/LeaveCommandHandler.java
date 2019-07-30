@@ -47,6 +47,10 @@ public class LeaveCommandHandler extends ModuleChildCommand {
             return true;
         }
 
+        if (!hasPermission(sender, "chat.channel." + channel.getName().toLowerCase() + ".listen")) {
+            return true;
+        }
+
         if (!data.getChannels().contains(channel)) {
             sendMessage(sender, "You are not currently part of the channel \"" + channelName + "\"");
             return true;

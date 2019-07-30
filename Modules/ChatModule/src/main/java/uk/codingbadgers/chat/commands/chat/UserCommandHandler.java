@@ -24,6 +24,10 @@ public class UserCommandHandler extends ModuleChildCommand {
             return false;
         }
 
+        if (!hasPermission(sender, "chat.user.info")) {
+            return true;
+        }
+
         Player p = Bukkit.getPlayer(args[0]);
 
         if (p == null) {
