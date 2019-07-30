@@ -17,6 +17,7 @@ import uk.codingbadgers.plugincore.gui.misc.GuiEnchantment;
 import uk.codingbadgers.plugincore.modules.Module;
 import uk.codingbadgers.plugincore.modules.ModuleDescriptionFile;
 import uk.codingbadgers.plugincore.modules.ModuleLoader;
+import uk.codingbadgers.plugincore.utilities.FileUtil;
 import uk.codingbadgers.plugincore.utilities.MessageSystem;
 
 import java.io.File;
@@ -76,7 +77,7 @@ public class ModulesCommandHandler extends SubCommandHandler {
 
             boolean isModuleLoaded = m_moduleLoader.isModuleFileLoaded(moduleFile);
             boolean isModuleEnable = false;
-            String moduleName = moduleFile.getName();
+            String moduleName = FileUtil.getNameWithoutExtension(moduleFile);
             String moduleVersion = "<unknown>";
             String moduleDescription = "<unknown>";
             Material moduleIconMaterial = Material.BEDROCK;
