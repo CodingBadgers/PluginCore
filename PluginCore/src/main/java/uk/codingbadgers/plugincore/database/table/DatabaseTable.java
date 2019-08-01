@@ -18,6 +18,7 @@ public abstract class DatabaseTable {
 
     public DatabaseTable(Logger logger) {
         m_logger = logger;
+        addDefaultConversions();
     }
 
     public boolean create(Class<?> layout) {

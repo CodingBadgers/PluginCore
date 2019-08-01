@@ -185,7 +185,7 @@ public class SQLiteDatabase extends CoreDatabase {
         DatabaseTable table = new SQLiteDatabaseTable(m_logger,this, name);
 
         if (tableExists(name)) {
-            return table;
+            return null;
         }
 
         if (!table.create(layout)) {
@@ -193,6 +193,18 @@ public class SQLiteDatabase extends CoreDatabase {
         }
 
         return table;
+    }
+
+    @Override
+    public DatabaseTable openTable(String name) {
+
+        DatabaseTable table = new SQLiteDatabaseTable(m_logger,this, name);
+
+        if (tableExists(name)) {
+            return table;
+        }
+
+        return null;
     }
 
 }

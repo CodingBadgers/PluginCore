@@ -33,6 +33,7 @@ public abstract class CoreDatabase {
     public abstract ResultSet queryResult(String query);
     public abstract boolean tableExists(String name);
     public abstract DatabaseTable createTable(String name, Class<?> layout);
+    public abstract DatabaseTable openTable(String name);
 
     public void query(String query) {
         query(query, false);

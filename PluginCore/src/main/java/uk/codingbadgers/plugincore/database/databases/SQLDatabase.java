@@ -159,7 +159,7 @@ public class SQLDatabase extends CoreDatabase {
         DatabaseTable table = new SQLDatabaseTable(m_logger, this, name);
 
         if (tableExists(name)) {
-            return table;
+            return null;
         }
 
         if (!table.create(layout)) {
@@ -167,6 +167,18 @@ public class SQLDatabase extends CoreDatabase {
         }
 
         return table;
+    }
+
+    @Override
+    public DatabaseTable openTable(String name) {
+
+        DatabaseTable table = new SQLDatabaseTable(m_logger, this, name);
+
+        if (tableExists(name)) {
+            return table;
+        }
+
+        return null;
     }
 
 }

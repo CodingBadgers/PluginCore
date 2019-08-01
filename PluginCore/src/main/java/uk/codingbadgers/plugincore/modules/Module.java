@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import uk.codingbadgers.plugincore.PluginCore;
+import uk.codingbadgers.plugincore.database.DatabaseManager;
+import uk.codingbadgers.plugincore.database.databases.CoreDatabase;
 import uk.codingbadgers.plugincore.modules.commands.ModuleCommand;
 
 import java.io.File;
@@ -109,6 +111,10 @@ public abstract class Module {
         m_logger.log(Level.FINE, "Registered listener '" + listener.getClass().getName() + "'");
         Bukkit.getServer().getPluginManager().registerEvents(listener, m_plugin);
         m_listeners.add(listener);
+    }
+
+    public CoreDatabase OpenDatabaseConnection(DatabaseManager.DatabaseType type) {
+        return m_plugin.getDatabaseManager().createDatabase(getName(), this, type, 20);
     }
 
     public File getFile() {

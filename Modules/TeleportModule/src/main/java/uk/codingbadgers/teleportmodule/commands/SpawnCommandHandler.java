@@ -99,7 +99,7 @@ public class SpawnCommandHandler extends ModuleCommand {
 
         World world = Bukkit.getWorld(worldName);
         if (world == null) {
-            sendMessage(sender, "No world named " + playerName + " exists, teleport failed.");
+            sendMessage(sender, "No world named " + worldName + " exists, teleport failed.");
             return;
         }
 
@@ -109,7 +109,7 @@ public class SpawnCommandHandler extends ModuleCommand {
     private void TeleportToSpawn(Player player, World world) {
         Location spawnLocation = m_module.getSpawn(world);
         player.teleport(spawnLocation);
-        sendMessage(player, "You have been teleported to the spawn of " + world.getName());
+        sendMessage(player, "You have been teleported to the spawn of the world '" + world.getName() + "'");
     }
 
 }
