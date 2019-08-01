@@ -8,6 +8,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicesManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.codingbadgers.plugincore.commands.CommandManager;
+import uk.codingbadgers.plugincore.database.DatabaseManager;
 import uk.codingbadgers.plugincore.gui.misc.GuiEnchantment;
 import uk.codingbadgers.plugincore.modules.ModuleLoader;
 import uk.codingbadgers.plugincore.modules.commands.ModuleCommandSystem;
@@ -19,6 +20,8 @@ import java.util.logging.Level;
 public class PluginCore extends JavaPlugin {
 
     private final MessageSystem m_messageSystem;
+    private final DatabaseManager m_databaseManager;
+
     private ModuleLoader m_moduleLoader;
     private ModuleCommandSystem m_commandSystem;
     private CorePlayerManager m_playerManager;
@@ -29,6 +32,7 @@ public class PluginCore extends JavaPlugin {
 
     public PluginCore() {
         m_messageSystem = new MessageSystem(this);
+        m_databaseManager = new DatabaseManager(getLogger());
     }
 
     @Override
@@ -92,6 +96,8 @@ public class PluginCore extends JavaPlugin {
     public MessageSystem getMessageSystem() {
         return m_messageSystem;
     }
+
+    public DatabaseManager getDatabaseManager() { return m_databaseManager; }
 
     public CorePlayerManager getPlayerManager() {
         return m_playerManager;
