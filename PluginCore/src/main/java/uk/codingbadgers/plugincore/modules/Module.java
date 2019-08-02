@@ -1,6 +1,8 @@
 package uk.codingbadgers.plugincore.modules;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import uk.codingbadgers.plugincore.PluginCore;
@@ -102,6 +104,17 @@ public abstract class Module {
         return m_dataFolder;
     }
 
+    public void sendMessage(CommandSender sender, String msg) {
+        String message = String.format(
+                "%s[%s]%s %s",
+                ChatColor.DARK_PURPLE,
+                getDescription().getName(),
+                ChatColor.WHITE,
+                msg);
+
+        sender.sendMessage(message);
+    }
+
     public void registerCommand(ModuleCommand command) {
         m_logger.log(Level.FINE, "Registered command '" + command.getName() + "'");
         m_plugin.getCommandSystem().registerCommand(this, command);
@@ -113,7 +126,7 @@ public abstract class Module {
         m_listeners.add(listener);
     }
 
-    public CoreDatabase OpenDatabaseConnection(DatabaseManager.DatabaseType type) {
+    public CoreDatabase openDatabaseConnection(DatabaseManager.DatabaseType type) {
         return m_plugin.getDatabaseManager().createDatabase(getName(), this, type, 20);
     }
 

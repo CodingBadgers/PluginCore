@@ -7,21 +7,24 @@ import uk.codingbadgers.plugincore.database.table.IDatabaseTableData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
-public class WorldSpawnData extends IDatabaseTableData {
+public class PlayerHomeData extends IDatabaseTableData {
 
-    public static WorldSpawnData create(Location location) {
-        WorldSpawnData data = new WorldSpawnData();
+    public static PlayerHomeData create(UUID playerUuid, Location location) {
+        PlayerHomeData data = new PlayerHomeData();
+        data.playerUuid = playerUuid.toString();
         data.worldName = location.getWorld().getName();
         data.x = location.getX();
         data.y = location.getY();
         data.z = location.getZ();
         data.pitch = location.getPitch();
         data.yaw = location.getYaw();
+        data.lastUpdateMs = System.currentTimeMillis();
         return data;
     }
 
-    public static Location toLocation(ResultSet resultSet) {
+    public static PlayerHomeData fromResult(ResultSet resultSet) {
         try {
 
             if (resultSet == null) {
@@ -29,19 +32,25 @@ public class WorldSpawnData extends IDatabaseTableData {
             }
 
             while (resultSet.next()) {
+
                 String worldName = resultSet.getString("worldName");
                 World world = Bukkit.getWorld(worldName);
                 if (world == null) {
                     return null;
                 }
 
-                double x = resultSet.getDouble("x");
-                double y = resultSet.getDouble("y");
-                double z = resultSet.getDouble("z");
-                float pitch = resultSet.getFloat("pitch");
-                float yaw = resultSet.getFloat("yaw");
+                PlayerHomeData data = new PlayerHomeData();
 
-                return new Location(world, x, y, z, yaw, pitch);
+                data.playerUuid = resultSet.getString("playerUuid");
+                data.worldName = worldName;
+                data.x = resultSet.getDouble("x");
+                data.y = resultSet.getDouble("y");
+                data.z = resultSet.getDouble("z");
+                data.pitch = resultSet.getFloat("pitch");
+                data.yaw = resultSet.getFloat("yaw");
+                data.lastUpdateMs = resultSet.getLong("lastUpdateMs");
+
+                return data;
             }
 
         } catch (SQLException e) {
@@ -52,10 +61,16 @@ public class WorldSpawnData extends IDatabaseTableData {
         return null;
     }
 
+    public Location toLocation() {
+        return new Location(Bukkit.getWorld(worldName), x, y, z, yaw, pitch);
+    }
+
+    public String playerUuid;
     public String worldName;
     public double x;
     public double y;
     public double z;
     public float pitch;
     public float yaw;
+    public long lastUpdateMs;
 }

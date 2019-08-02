@@ -24,7 +24,7 @@ public class SetSpawnCommandHandler extends ModuleCommand {
         }
 
         if (!(sender instanceof Player)) {
-            sendMessage(sender, "Only players can set a world spawn");
+            sendMessage(sender, "Only online players can set a world spawn");
             return true;
         }
 

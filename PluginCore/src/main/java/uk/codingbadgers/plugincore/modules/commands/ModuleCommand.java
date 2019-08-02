@@ -117,15 +117,8 @@ public abstract class ModuleCommand extends Command implements TabCompleter {
         return new ArrayList<>();
     }
 
-    protected void sendMessage(CommandSender sender, String msg) {
-        String message = String.format(
-            "%s[%s]%s %s",
-            ChatColor.DARK_PURPLE,
-            m_module.getDescription().getName(),
-            ChatColor.WHITE,
-            msg);
-
-        sender.sendMessage(message);
+    protected void sendMessage(CommandSender sender, String message) {
+        m_module.sendMessage(sender, message);
     }
 
     protected boolean hasPermission(CommandSender sender, String permission) {
