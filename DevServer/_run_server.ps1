@@ -3,7 +3,7 @@
 #####################################
 
 ## Configuration ##
-$paperMcDownload = "https://papermc.io/api/v1/paper/1.14.4/148/download"
+$paperMcDownload = "https://papermc.io/api/v1/paper/1.14.4/156/download"
 ## End Configuration ##
 
 # Remove all plugins, or create the plugins directory if it does not exist
