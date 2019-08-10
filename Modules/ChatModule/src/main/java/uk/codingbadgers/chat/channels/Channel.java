@@ -16,8 +16,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Channel {
+
+    private static final Pattern urlPattern = Pattern.compile("(?:https?://)?(?:www\\.)?[\\w]+\\.[\\w.]+(?:/.*)?");
 
     public enum MessagePartType {
         TEXT,
@@ -139,7 +144,7 @@ public class Channel {
                     break;
 
                 case MESSAGE:
-                    builder.append(TextComponent.fromLegacyText(msg, part.color));
+                    builder.append(formatMessage(msg, part.color));
                     break;
 
                 case TEXT:
@@ -157,6 +162,37 @@ public class Channel {
         for (CorePlayer p : m_currentPlayers) {
             p.sendRawMessage(components);
         }
+    }
+
+    private BaseComponent[] formatMessage(String msg, ChatColor color) {
+        ComponentBuilder builder = new ComponentBuilder("");
+        builder.color(color);
+
+        Matcher matcher = urlPattern.matcher(msg);
+
+        int pos = 0;
+
+        while (matcher.find()) {
+            String front = msg.substring(pos, matcher.start());
+            builder.append(TextComponent.fromLegacyText(front));
+
+            String url = matcher.group(0);
+
+            TextComponent component = new TextComponent("[Link]");
+            component.setColor(ChatColor.GOLD);
+            component.setUnderlined(true);
+            component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
+            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText(url)));
+
+            builder.append(component);
+
+            pos = matcher.end();
+        }
+
+        String front = msg.substring(pos);
+        builder.append(TextComponent.fromLegacyText(front));
+
+        return builder.create();
     }
 
     public Iterable<CorePlayer> getActivePlayers() {
