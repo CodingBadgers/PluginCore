@@ -1,5 +1,6 @@
 package uk.codingbadgers.chat.data;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -44,7 +45,7 @@ public class ChatPlayerData implements CorePlayerData {
     }
 
     public List<Channel> getChannels() {
-        return m_listeningChannels;
+        return ImmutableList.copyOf(m_listeningChannels);
     }
 
     public void joinChannel(Channel channel) {

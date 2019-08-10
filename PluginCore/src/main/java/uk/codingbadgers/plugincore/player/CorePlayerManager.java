@@ -53,4 +53,8 @@ public class CorePlayerManager implements Listener {
 
         return corePlayer;
     }
+
+    public Iterable<CorePlayer> getPlayers() {
+        return m_players.values();
+    }
 }
